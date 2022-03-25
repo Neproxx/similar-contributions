@@ -14,13 +14,11 @@ jobs:
         with:
           python-version: '3.7.12'
 
-      - name: Set environment variables
-        env:
-          REPO_FULLNAME: ${{ github.repository }}
-
       - name: Run action
-      - uses: ./                  # Specifies the action of this repo?
+        env:
+            REPO_FULLNAME: ${{ github.repository }}
+        uses: ./                  # Specifies the action of this repo?
     
       - run: |
-          echo "From workflow script: REPO_FULLNAME=$REPO_FULLNAME"
+#          echo "From workflow script: REPO_FULLNAME=$REPO_FULLNAME"
           echo "You are now finished!"
