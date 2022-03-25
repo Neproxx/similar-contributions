@@ -17,8 +17,9 @@ jobs:
       - name: Run action
         env:
           REPO_FULLNAME: ${{ github.repository }}
-        uses: ./                  # Specifies the action of this repo?
+        # Specifies the action of this repo?
+        uses: ./
 
       - run: |
-#          echo "From workflow script: REPO_FULLNAME=$REPO_FULLNAME"
           echo "You are now finished!"
+          #echo "From workflow script: REPO_FULLNAME=$REPO_FULLNAME"
