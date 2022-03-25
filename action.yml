@@ -1,0 +1,6 @@
+name: 'similar-contributions'
+description: 'Searches for similar contributions by comparing previous pull requests to the current proposal title'
+
+runs:
+  using: 'node16'
+  main: 'main.js'

@@ -1,0 +1,19 @@
+name: Test
+
+on: 
+  issues:
+    types: [opened, edited]
+
+jobs:
+  # test is the job name
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      #- uses: actions/setup-python@v3
+      #  with:
+      #    python-version: '3.7.12'
+      #- uses: ./                  # Specifies the action of this repo?
+    
+      - run: |
+          echo "You are now finished!"
