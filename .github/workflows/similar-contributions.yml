@@ -15,8 +15,8 @@ jobs:
           python-version: '3.7.12'
 
       - name: Run action
-        env:
-            REPO_FULLNAME: ${{ github.repository }}
+        #env:
+        #    REPO_FULLNAME: ${{ github.repository }}
         uses: ./                  # Specifies the action of this repo?
     
       - run: |
