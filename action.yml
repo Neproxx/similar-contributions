@@ -10,9 +10,9 @@ runs:
   steps:
     - run: python -m pip install nltk  # Installing dependencies
       shell: bash
-    - run: echo Your action_path: ${{ github.action_path }}
-      shell: bash
-    - run: echo Your github.workspace: ${{ github.workspace }}
-      shell: bash
+    #- run: echo Your action_path: ${{ github.action_path }}
+    #  shell: bash
+    #- run: echo Your github.workspace: ${{ github.workspace }}
+    #  shell: bash
     - run: python ./main.py
       shell: bash
