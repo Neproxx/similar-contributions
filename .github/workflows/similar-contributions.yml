@@ -36,7 +36,9 @@ jobs:
         with:
           title: "Reading suggestions"
           body: $GENERATED_COMMENT
-          pinned: false 
+          pinned: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - run: |
           echo "You are now finished!"
