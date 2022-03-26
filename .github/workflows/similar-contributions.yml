@@ -21,6 +21,11 @@ jobs:
         # Specifies the action of this repo?
         uses: ./
 
+      - name: Read Output
+        run: |
+          cat ${{ github.repository }}/generated_comment.md >> $GENERATED_COMMENT
+          echo {{ $GENERATED_COMMENT }}
+
       - run: |
           echo "You are now finished!"
           #echo "From workflow script: REPO_FULLNAME=$REPO_FULLNAME"
