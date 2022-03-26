@@ -23,8 +23,8 @@ jobs:
 
       - name: Read Output
         run: |
-          cat ${{ GITHUB_WORKSPACE }}/generated_comment.md
-          cat ${{ GITHUB_WORKSPACE }}/generated_comment.md >> $GITHUB_ENV
+          cat $GITHUB_WORKSPACE/generated_comment.md
+          cat $GITHUB_WORKSPACE/generated_comment.md >> $GITHUB_ENV
           echo {{ $GENERATED_COMMENT }}
 
       - run: |
