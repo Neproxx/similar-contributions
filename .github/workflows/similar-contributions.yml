@@ -29,6 +29,10 @@ jobs:
           echo 'EOF' >> $GITHUB_ENV
           echo $GENERATED_COMMENT
 
+      - run: echo $GITHUB_ENV
+
+      - run: echo $GENERATED_COMMENT
+
       - run: |
           echo "You are now finished!"
           #echo "From workflow script: REPO_FULLNAME=$REPO_FULLNAME"
