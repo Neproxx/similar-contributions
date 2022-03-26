@@ -35,7 +35,7 @@ jobs:
       - name: Set output of comment generation
         id: comment_output
         run: |
-          echo ::set-output name={comment}::{$GENERATED_COMMENT}
+          echo ::set-output name={comment}::$GENERATED_COMMENT
           echo "::set-output name=dummy::This is a dummy output\n"
 
       - name: Print output
