@@ -47,7 +47,8 @@ jobs:
         with:
           title: "Reading suggestions"
           body: |-
-            :wave: Hi, {{#each assignees}}@{{this}}{{#unless @last}}, {{/unless}}{{/each}}!
+            :wave: Hi, {{#GENERATED_COMMENT}}, {{/GENERATED_COMMENT}}!
+            "Triggered by: ${{ github.event.action }}, event number: ${{github.event.number}}."
           pinned: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
