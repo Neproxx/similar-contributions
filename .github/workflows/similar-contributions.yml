@@ -1,8 +1,9 @@
 name: Test
 
 on: 
-  issues:
+  - issues:
     types: [opened, edited]
+  - push
 
 jobs:
   # test is the job name
