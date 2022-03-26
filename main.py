@@ -25,7 +25,7 @@ pr_conts_final = [] #filter_candidates(candidates=pr_contributions) # TODO
 
 # Write similar contributions to file that can be read from the github workflow
 # and then turned into a PR comment
-output = """## Reading Recommendations
+output = """GENERATED_COMMENT=## Reading Recommendations
 There are many good contributions from the last years that can help as inspiration of how to create a high quality contribution yourself.
 Based on your proposal title, I have found the following outstanding previous student works that could be interesting to you:
 
