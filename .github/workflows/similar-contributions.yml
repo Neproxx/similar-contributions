@@ -46,10 +46,10 @@ jobs:
         uses: imjohnbo/issue-bot@3daae12aa54d38685d7ff8459fc8a2aee8cea98b
         with:
           title: "Reading suggestions"
-          body: "Triggered by: ${{ github.event.action }}, event number: ${{github.event.number}}. Comment: $COMMENT. Other comment: $GENERATED_COMMENT"
+          body: |-
+            :wave: Hi, {{#each assignees}}@{{this}}{{#unless @last}}, {{/unless}}{{/each}}!
           pinned: false
         env:
-          COMMENT: $GENERATED_COMMENT
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - run: |
