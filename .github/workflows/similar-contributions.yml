@@ -35,7 +35,7 @@ jobs:
         uses: imjohnbo/issue-bot@3daae12aa54d38685d7ff8459fc8a2aee8cea98b
         with:
           title: "Reading suggestions"
-          body: $GENERATED_COMMENT
+          body: ${{ GENERATED_COMMENT }}
           pinned: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
