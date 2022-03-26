@@ -30,6 +30,14 @@ jobs:
 
       - run: echo $GENERATED_COMMENT
 
+      # TODO: This has to be replaced with the creation of a PR comment in the future
+      - name: Create Issue
+        uses: imjohnbo/issue-bot@3daae12aa54d38685d7ff8459fc8a2aee8cea98b
+        with:
+          title: "Reading suggestions"
+          body: $GENERATED_COMMENT
+          pinned: false 
+
       - run: |
           echo "You are now finished!"
           #echo "From workflow script: REPO_FULLNAME=$REPO_FULLNAME"
