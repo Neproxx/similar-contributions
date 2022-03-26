@@ -32,9 +32,9 @@ jobs:
 
       - run: echo $GENERATED_COMMENT
 
-      #- name: Set output of comment generation
-      #  id: comment_output
-      #  run: echo ::set-output name={GENERATED_COMMENT}::{$GENERATED_COMMENT}
+      - name: Set output of comment generation
+        id: comment_output
+        run: echo ::set-output name={comment}::{$GENERATED_COMMENT}
 
       - run: echo ${{ github.event.action }}, run ID is ${{ github.event.workflow_run.id }}
 
@@ -46,9 +46,7 @@ jobs:
         uses: imjohnbo/issue-bot@3daae12aa54d38685d7ff8459fc8a2aee8cea98b
         with:
           title: "Reading suggestions"
-          body: |-
-            :wave: Hi, {{#GENERATED_COMMENT}}, {{/GENERATED_COMMENT}}!
-            "Triggered by: ${{ github.event.action }}, event number: ${{github.event.number}}."
+          body: ${{ steps.comment_output.outputs.comment }}
           pinned: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
