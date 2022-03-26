@@ -36,5 +36,5 @@ for c in selected_conts_final:
 path_output = os.path.join(path_repo, "generated_comment.md")
 with open(path_output, "w", encoding="utf8") as f:
     f.write(output)
-
+print(f"Output generated at: {path_output}")
 
