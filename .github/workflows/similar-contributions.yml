@@ -27,7 +27,7 @@ jobs:
           echo 'GENERATED_COMMENT<<EOF' >> $GITHUB_ENV
           cat $GITHUB_WORKSPACE/generated_comment.md >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
-          echo {{ $GENERATED_COMMENT }}
+          echo $GENERATED_COMMENT
 
       - run: |
           echo "You are now finished!"
