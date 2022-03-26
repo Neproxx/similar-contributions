@@ -36,7 +36,8 @@ jobs:
         id: comment_output
         run: echo ::set-output name={comment}::{$GENERATED_COMMENT}
 
-      - run: echo ${{ github.event.action }}, run ID is ${{ github.event.workflow_run.id }}
+      - name: Print output
+        run: echo Output comment is ${{ steps.comment_output.outputs.comment }}
 
       # TODO: This has to be replaced with the creation of a PR comment in the future
       # Use this action to create / update a PR comment: https://github.com/marketplace/actions/create-or-update-comment
