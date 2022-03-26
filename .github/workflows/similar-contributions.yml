@@ -21,10 +21,12 @@ jobs:
         # Specifies the action of this repo?
         uses: ./
 
+      # Set env according to https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#multiline-strings
       - name: Read Output
         run: |
-          cat $GITHUB_WORKSPACE/generated_comment.md
+          echo 'GENERATED_COMMENT<<EOF' >> $GITHUB_ENV
           cat $GITHUB_WORKSPACE/generated_comment.md >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
           echo {{ $GENERATED_COMMENT }}
 
       - run: |
