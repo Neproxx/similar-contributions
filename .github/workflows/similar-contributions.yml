@@ -4,6 +4,8 @@ on:
   issues:
     types: [opened, edited]
   push:
+  pull_request:
+    types: [opened, edited]
 
 jobs:
   # test is the job name
@@ -31,11 +33,14 @@ jobs:
       - run: echo $GENERATED_COMMENT
 
       # TODO: This has to be replaced with the creation of a PR comment in the future
+      # Use this action to create / update a PR comment: https://github.com/marketplace/actions/create-or-update-comment
+      # Use this action to find a previous PR comment which should be updated: https://github.com/peter-evans/find-comment
+      # Note: You can use ${{ github.event.pull_request.number }}
       - name: Create Issue
         uses: imjohnbo/issue-bot@3daae12aa54d38685d7ff8459fc8a2aee8cea98b
         with:
           title: "Reading suggestions"
-          body: ${GENERATED_COMMENT}
+          body: "Triggered by: ${{ github.event.action }}"
           pinned: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
