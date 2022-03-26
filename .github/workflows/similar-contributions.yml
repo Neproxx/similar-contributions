@@ -32,6 +32,10 @@ jobs:
 
       - run: echo $GENERATED_COMMENT
 
+      #- name: Set output of comment generation
+      #  id: comment_output
+      #  run: echo ::set-output name={GENERATED_COMMENT}::{$GENERATED_COMMENT}
+
       - run: echo ${{ github.event.action }}, run ID is ${{ github.event.workflow_run.id }}
 
       # TODO: This has to be replaced with the creation of a PR comment in the future
@@ -42,9 +46,10 @@ jobs:
         uses: imjohnbo/issue-bot@3daae12aa54d38685d7ff8459fc8a2aee8cea98b
         with:
           title: "Reading suggestions"
-          body: "Triggered by: ${{ github.event.action }}, event number: ${{github.event.number}}."
+          body: "Triggered by: ${{ github.event.action }}, event number: ${{github.event.number}}. Comment: $COMMENT. Other comment: $GENERATED_COMMENT"
           pinned: false
         env:
+          COMMENT: $GENERATED_COMMENT
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - run: |
