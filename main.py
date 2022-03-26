@@ -5,10 +5,10 @@ from similarity import filter_candidates
 
 
 # Path for workflow
-#path_repo = os.getenv("GITHUB_WORKSPACE")
+path_repo = os.getenv("GITHUB_WORKSPACE")
 
 # Path local
-path_repo = 'C:\\Users\\Marcel\\Documents\\working\\Uni\\KTH\\DevOps\\devops-course'
+#path_repo = 'C:\\Users\\Marcel\\Documents\\working\\Uni\\KTH\\DevOps\\devops-course'
 proposal_title = 'React CI testing' # TODO: Get from environment
 
 # Get candidate contributions
