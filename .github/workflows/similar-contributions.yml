@@ -17,10 +17,9 @@ jobs:
         with:
           python-version: '3.7.12'
 
+      # Note: uses action of this repository.
+      # Will have to be replaced by action name once it is published
       - name: Run action
-        env:
-          REPO_FULLNAME: ${{ github.repository }}
-        # Specifies the action of this repo?
         uses: ./
 
       # Set env according to https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#multiline-strings
@@ -30,19 +29,6 @@ jobs:
           cat $GITHUB_WORKSPACE/generated_comment.md >> $GITHUB_ENV
           echo 'EOF' >> $GITHUB_ENV
 
-      - run: echo $GENERATED_COMMENT
-
-      - name: Set output of comment generation
-        id: comment_output
-        run: |
-          echo ::set-output name={comment}::$GENERATED_COMMENT
-          echo "::set-output name=dummy::This is a dummy output\n"
-
-      - name: Print output
-        run: |
-          echo output comment is ${{ steps.comment_output.outputs.comment }}
-          echo dummy output is ${{ steps.comment_output.outputs.dummy }}
-
       # TODO: This has to be replaced with the creation of a PR comment in the future
       # Use this action to create / update a PR comment: https://github.com/marketplace/actions/create-or-update-comment
       # Use this action to find a previous PR comment which should be updated: https://github.com/peter-evans/find-comment
@@ -51,12 +37,8 @@ jobs:
         uses: imjohnbo/issue-bot@3daae12aa54d38685d7ff8459fc8a2aee8cea98b
         with:
           title: "Reading suggestions"
-          #body: ${{ steps.comment_output.outputs.comment }}
           body: ${{ env.GENERATED_COMMENT }}
           pinned: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - run: |
-          echo "You are now finished!"
-          #echo "From workflow script: REPO_FULLNAME=$REPO_FULLNAME"
