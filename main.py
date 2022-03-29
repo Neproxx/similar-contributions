@@ -7,11 +7,12 @@ proposal_title = 'React CI testing' # TODO: Get from environment
 
 # Path for workflow
 path_repo = os.getenv("GITHUB_WORKSPACE")
-#repo_owner = os.getenv("GITHUB_REPOSITORY")
+repo_owner = os.getenv("GITHUB_REPOSITORY")
 cont_folder = "attic" # TODO -> ENV
-branch = "2022" # TODO
+branch = "main"
+#branch = "2022" # TODO
 #path_repo = 'C:\\Users\\Marcel\\Documents\\working\\Uni\\KTH\\DevOps\\devops-course'
-repo_owner = "KTH/devops-course"
+#repo_owner = "KTH/devops-course"
 
 #path_contributions = os.path.join(path_repo, os.getenv("TODO"))
 path_contributions = os.path.join(path_repo, cont_folder)
