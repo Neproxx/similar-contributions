@@ -1,9 +1,6 @@
 name: Test
 
 on: 
-  issues:
-    types: [opened, edited]
-  push:
   pull_request:
     types: [opened, edited]
 
@@ -16,7 +13,11 @@ jobs:
       - uses: actions/setup-python@v3
         with:
           python-version: '3.7.12'
-
+      
+      # Get title from PR comment
+      - name: Get proposal title from PR body
+        run: echo "${{ github.event.pull_request.body }}"
+      
       # Note: uses action of this repository.
       # Will have to be replaced by action name once it is published
       - name: Run action
