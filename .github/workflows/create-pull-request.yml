@@ -17,10 +17,10 @@ jobs:
       - name: Run the Action
         uses: devops-infra/action-pull-request@v0.4.2
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GH_PAT }}
           source_branch: fabian_dev
           target_branch: main
-          title: ${{ github.event.number }}
+          title: ${{ github.event.id }}
           template: .github/EXAMPLE_README.md
           #body: "**Automated pull request**"
           #reviewer: octocat
