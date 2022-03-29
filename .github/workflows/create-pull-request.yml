@@ -20,7 +20,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           source_branch: fabian_dev
           target_branch: main
-          title: My pull request
+          title: ${{ github.event.number }}
           template: .github/EXAMPLE_README.md
           #body: "**Automated pull request**"
           #reviewer: octocat
