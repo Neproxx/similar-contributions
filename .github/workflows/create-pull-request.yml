@@ -13,6 +13,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
+          github_token: ${{ secrets.GH_PAT }}
           fetch-depth: 0
       - name: Run the Action
         uses: devops-infra/action-pull-request@v0.4.2
