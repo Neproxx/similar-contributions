@@ -13,12 +13,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
-          github_token: ${{ secrets.GH_PAT }}
+          github_token: ${{ secrets.CONTROL_SECRET }}
           fetch-depth: 0
       - name: Run the Action
         uses: devops-infra/action-pull-request@v0.4.2
         with:
-          github_token: ${{ secrets.GH_PAT }}
+          github_token: ${{ secrets.CONTROL_SECRET }}
           source_branch: fabian_dev
           target_branch: main
           title: ${{ github.event.id }}
