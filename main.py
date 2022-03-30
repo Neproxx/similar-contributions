@@ -10,13 +10,13 @@ path_repo = os.getenv("GITHUB_WORKSPACE")
 repo_owner = os.getenv("GITHUB_REPOSITORY")
 branch = os.getenv("GITHUB_BASE_REF")
 cont_folder = os.getenv("INPUT_SEARCH_DIR")
-allowed_types = json.loads(os.getenv("INPUT_FILTER"))
-                #json.loads('["essay", "presentation", "course-automation"]')
+allowed_types = os.getenv("INPUT_FILTER").strip("[] \n").split(",")
+allowed_types = [t.strip() for t in allowed_types]
 #cont_folder = "attic"
 #branch = "main"
 #path_repo = 'C:\\Users\\marce\\Documents\\work\\KTH\Devops\\similar-contributions'
 #repo_owner = "KTH/devops-course"
-allowed_types = ["essay", "course-automation", "demo", "presentation", "executable-tutorial", "tutorial", "open-source", "open"]
+#allowed_types = ["essay", "course-automation", "demo", "presentation", "executable-tutorial", "tutorial", "open-source", "open"]
 
 print(f"GITHUB_WORKSPACE = {os.getenv('GITHUB_WORKSPACE')}")
 print(f"GITHUB_REPOSITORY = {os.getenv('GITHUB_REPOSITORY')}")
