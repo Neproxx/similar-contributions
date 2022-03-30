@@ -21,6 +21,9 @@ runs:
     #- run: echo Your github.workspace: ${{ github.workspace }}
     #  shell: bash
     - run: python ./main.py
+      env: |
+        INPUT_SEARCH_DIR: ${{ github.event.inputs.search_dir }}
+        INPUT_FILTER: ${{ github.event.inputs.filter }}
       shell: bash
 
     # Set env according to https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#multiline-strings
