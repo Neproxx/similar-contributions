@@ -2,7 +2,7 @@ name: Test
 
 on: 
   pull_request:
-    types: [opened, edited]
+    types: [opened, edited, synchronize]
 
 jobs:
   # test is the job name
@@ -16,7 +16,7 @@ jobs:
       
       # Get title from PR comment
       - name: Get proposal title from PR body
-        run: echo $'${{ github.event.pull_request.body }}' | sed -n '/##/,/##/p'
+        run: echo '${ github.event.pull_request.body }' | | sed -n '/^## Title/,${p;/^## Names/q}' | sed '1d;$d' | sed '/^$/d'
       
       # Note: uses action of this repository.
       # Will have to be replaced by action name once it is published
