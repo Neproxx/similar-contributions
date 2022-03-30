@@ -18,7 +18,7 @@ runs:
       shell: bash
     - run: python ./main.py
       shell: bash
-      env: |
+      env:
         INPUT_SEARCH_DIR: ${{ inputs.search_dir }}
         INPUT_FILTER: ${{ inputs.filter }}
 
