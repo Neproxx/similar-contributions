@@ -115,6 +115,8 @@ def get_all_contributions(path_contributions, allowed_types):
                                                     if os.path.isfile(path_readme) and "readme" in file.lower():
                                                         relative_url = "/".join([year_folder, cyear_folder, type_folder,
                                                                                  path_pres_week, file])
+                                                        if "attic/attic" in relative_url:
+                                                            print(f"PROBLEM presentation: {relative_url}")
                                                         candidates_all += extract_from_presentations(path_readme, relative_url)
                                 else:
                                     for team_folder in os.listdir(path_type):
@@ -125,6 +127,8 @@ def get_all_contributions(path_contributions, allowed_types):
                                                 if "readme.md" in file.lower():
                                                     path_readme = os.path.join(path_team, file)
                                                     relative_url = "/".join([year_folder, cyear_folder, type_folder, team_folder, file])
+                                                    if "attic/attic" in relative_url:
+                                                        print(f"PROBLEM: {relative_url}")
                                                     candidates_all += extract_from_regular(path_readme,
                                                                                         assignment_type=type_folder,
                                                                                         relative_url=relative_url,
