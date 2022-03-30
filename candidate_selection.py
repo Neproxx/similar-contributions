@@ -145,7 +145,7 @@ def extract_title_from_readme(path, year, stats):
     title = ""
     if os.name == "nt":
         path_readme = path + "\\README.md"
-    else
+    else:
         path_readme = path + "/README.md"
     print(f"Extracting from: {path_readme}")
     if(year[0] in ['2019', '2020', '2021']):
@@ -177,6 +177,12 @@ def extract_title_from_readme(path, year, stats):
             stats.from_topic_section += 1
         else:
             stats.ill_formatted += 1
+        title_before = title
+        #strip titles from unnecessary info
+        for str in title_strip_until2021:
+            title = title.lower().replace(str.lower(), '')
+        if title_before != title:
+            stats.removed_substrings += 1
     elif(year == ['2022']):
         pass
     else:
@@ -190,10 +196,8 @@ def extract_title_from_readme(path, year, stats):
                     inRecordingMode = False
                 else:
                     title += line
-    title_before = title
-    #strip titles from unnecessary info
-    for str in title_strip_until2021:
-        title = title.lower().replace(str.lower(), '')
-    if title_before != title:
-        stats.removed_substrings += 1
+        if title != "":
+            stats.from_topic_section += 1
+        else:
+            stats.ill_formatted += 1
     return title.lstrip()
