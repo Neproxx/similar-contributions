@@ -32,9 +32,27 @@ jobs:
         uses: ./
 
       # Create comment under current pull request
-      - name: Comment current pull request
-        uses: alawiii521/current-pr-comment@v1.0
+      - name: Find Comment
+        uses: peter-evans/find-comment@v2
+        id: fc # this tag will be used for the conditional selection of either creating or updating
         with:
-          comment: ${{ env.GENERATED_COMMENT }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: Reading Recommendations
+
+      - name: Create comment
+        if: steps.fc.outputs.comment-id == ''
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: ${{ env.GENERATED_COMMENT }}
+
+      - name: Update comment
+        if: steps.fc.outputs.comment-id != ''
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          edit-mode: replace
+          body: ${{ env.GENERATED_COMMENT }}
+          reactions: hooray
 
