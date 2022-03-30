@@ -1,4 +1,5 @@
 import os
+import json
 from candidate_selection import get_outstanding_contributions, get_all_contributions
 from similarity import filter_candidates
 
@@ -9,7 +10,8 @@ path_repo = os.getenv("GITHUB_WORKSPACE")
 repo_owner = os.getenv("GITHUB_REPOSITORY")
 branch = os.getenv("GITHUB_BASE_REF")
 cont_folder = os.getenv("INPUT_SEARCH_DIR")
-#allowed_types = os.getenv("INPUT_FILTER") # TODO: parse
+allowed_types = json.loads(os.getenv("INPUT_FILTER"))
+                #json.loads('["essay", "presentation", "course-automation"]')
 #cont_folder = "attic"
 #branch = "main"
 #path_repo = 'C:\\Users\\marce\\Documents\\work\\KTH\Devops\\similar-contributions'
