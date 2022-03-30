@@ -10,13 +10,13 @@ stop_words = set(stopwords.words('english'))
 punctuation = set([',', '.', ':', ';', '?', '!', '&'])
 non_informant_words = set(["course", "automation", "essay", "demo", "tutorial", "feedback", "open-source", "presentation", "proposal"])
 
-def filter_candidates(proposal_title, candidates):
+def filter_candidates(proposal_title, candidates, min_sim):
     """
     Return those candidates contributions that are similar to the proposal.
     """
     similar_contributions = []
     for candidate in candidates:
-        if is_similar(proposal_title, candidate["title"]):
+        if is_similar(proposal_title, candidate["title"], min_sim=min_sim):
             similar_contributions.append(candidate)
     return similar_contributions
 

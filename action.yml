@@ -6,11 +6,18 @@ inputs:
     description: Directory containing the contributions
     required: true
     default: "attic"
-  filter:
-    description: Filter for contribution types that are supposed to be regarded
+  filter_type:
+    description: Filter for contribution types that are should be regarded
     required: true
     default: "['essay', 'course-automation', 'demo', 'presentation', 'executable-tutorial', 'tutorial', 'open-source', 'open']"
-
+  filter_year: 
+    description: Filter for contribution years that should be regarded
+    required: true
+    default: "['2019', '2020', '2021']"
+  min_word_similarity:
+    description: Treshold for similiarity check of keywords
+    required: true
+    default: "0.8"
 runs:
   using: "composite"
   steps:
@@ -20,7 +27,9 @@ runs:
       shell: bash
       env:
         INPUT_SEARCH_DIR: ${{ inputs.search_dir }}
-        INPUT_FILTER: ${{ inputs.filter }}
+        INPUT_FILTER_TYPE: ${{ inputs.filter_type }}
+        INPUT_FILTER_YEAR: ${{ inputs.filter_year }}
+        INPUT_MIN_WORD_SIMILARITY: ${{ inputs.min_word_similarity }}
 
     # Set env according to https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#multiline-strings
     - name: Read generated comment into env
