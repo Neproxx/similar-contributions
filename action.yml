@@ -4,11 +4,11 @@ description: 'Searches for similar contributions by comparing previous pull requ
 inputs:
   search_dir:
     description: Directory containing the contributions
-    required: false
+    required: true
     default: "attic"
   filter:
     description: Filter for contribution types that are supposed to be regarded
-    required: false
+    required: true
     default: "['essay', 'course-automation', 'demo', 'presentation', 'executable-tutorial', 'tutorial', 'open-source', 'open']"
 
 runs:
