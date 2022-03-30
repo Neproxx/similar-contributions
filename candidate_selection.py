@@ -111,11 +111,12 @@ def get_all_contributions(path_contributions, allowed_types, allowed_years):
             & (cyear != []) # Filter only allowed years
         ) :
             ctitle = extract_title_from_readme(path, cyear, stats)
-            print(f"\t {ctitle}")
+            #print(f"\t {ctitle}")
+            rel_path = path[path.find(path_contributions):]
             if (ctitle != ""): # Add candidate only if title could be added
                 candidates_all += [{
                                 "title": ctitle,
-                                "relative_url": path,
+                                "relative_url": rel_path,
                                 "type": ctype
                                 }]
     #Print stats
@@ -147,7 +148,7 @@ def extract_title_from_readme(path, year, stats):
         path_readme = path + "\\README.md"
     else:
         path_readme = path + "/README.md"
-    print(f"Extracting from: {path_readme}")
+    #print(f"Extracting from: {path_readme}")
     if(year[0] in ['2019', '2020', '2021']):
         # parse first header
         with open(path_readme, "r", encoding="utf8", errors="ignore") as fp:
