@@ -14,9 +14,9 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: echo "${{ inputs.search_dir }}" >> $INPUT_SEARCH_DIR
+    - run: echo "${{ inputs.search_dir }}" > $INPUT_SEARCH_DIR
       shell: bash
-    - run: echo "${{ inputs.filter }}" >> $INPUT_FILTER
+    - run: echo "${{ inputs.filter }}" > $INPUT_FILTER
       shell: bash
     - run: python -m pip install nltk  # Installing dependencies
       shell: bash
