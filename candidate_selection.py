@@ -189,6 +189,7 @@ def extract_from_regular(path_readme, assignment_type, relative_url, stats):
                 if is_first_line:
                     first_header = line.strip(" \n#")
                     is_first_line = False
+                print(f"Candid. Select line: {line}")
                 cur_section = get_regular_readme_section(line.lower())
             if cur_section == "title" and not is_empty(line):
                 parsing_multiline = True
