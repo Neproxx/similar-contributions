@@ -14,18 +14,22 @@ allowed_types = os.getenv("INPUT_FILTER_TYPE").strip("[] \n").split(",")
 allowed_years = os.getenv("INPUT_FILTER_YEAR").strip("[] \n").split(",")
 min_sim = float(os.getenv("INPUT_MIN_WORD_SIMILARITY"))
 allowed_types = [t.strip("\'") for t in allowed_types]
+allowed_years = [t.strip("\'") for t in allowed_years]
 #cont_folder = "attic"
 #branch = "main"
 #path_repo = 'C:\\Users\\marce\\Documents\\work\\KTH\Devops\\similar-contributions'
 #repo_owner = "KTH/devops-course"
 #allowed_types = ["essay", "course-automation", "demo", "presentation", "executable-tutorial", "tutorial", "open-source", "open"]
 
-#print(f"GITHUB_WORKSPACE = {os.getenv('GITHUB_WORKSPACE')}")
-#print(f"GITHUB_REPOSITORY = {os.getenv('GITHUB_REPOSITORY')}")
-#print(f"GITHUB_BASE_REF = {os.getenv('GITHUB_BASE_REF')}")
-#print(f"INPUT_SEARCH_DIR = {os.getenv('INPUT_SEARCH_DIR')}")
-#print(f"INPUT_FILTER = {os.getenv('INPUT_FILTER')}")
+print(f"GITHUB_WORKSPACE = {os.getenv('GITHUB_WORKSPACE')}")
+print(f"GITHUB_REPOSITORY = {os.getenv('GITHUB_REPOSITORY')}")
+print(f"GITHUB_BASE_REF = {os.getenv('GITHUB_BASE_REF')}")
+print(f"INPUT_SEARCH_DIR = {os.getenv('INPUT_SEARCH_DIR')}")
+print(f"INPUT_FILTER = {os.getenv('INPUT_FILTER')}")
 print(f"allowed types: {allowed_types}")
+print(f"allowed_years: {allowed_years}")
+print(f"min_sim: {min_sim}")
+
 
 path_contributions = os.path.join(path_repo, cont_folder)
 
