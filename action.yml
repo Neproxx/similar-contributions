@@ -17,6 +17,7 @@ runs:
     - run: |
         echo "${{ github.event.inputs.search_dir }}"
         echo "${{ github.event.inputs.filter }}"
+      shell: bash
     - run: python -m pip install nltk  # Installing dependencies
       shell: bash
     #- run: echo Your action_path: ${{ github.action_path }}
