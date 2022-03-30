@@ -22,8 +22,8 @@ runs:
       shell: bash
     - run: python ./main.py
       env: |
-        INPUT_SEARCH_DIR: "${{ inputs.search_dir }}"
-        INPUT_FILTER: "${{ inputs.filter }}"
+        INPUT_SEARCH_DIR: ${{ inputs.search_dir }}
+        INPUT_FILTER: ${{ inputs.filter }}
       shell: bash
 
     # Set env according to https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#multiline-strings
