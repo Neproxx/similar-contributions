@@ -20,10 +20,6 @@ runs:
       shell: bash
     - run: python -m pip install nltk  # Installing dependencies
       shell: bash
-    #- run: echo Your action_path: ${{ github.action_path }}
-    #  shell: bash
-    #- run: echo Your github.workspace: ${{ github.workspace }}
-    #  shell: bash
     - run: python ./main.py
       env: |
         INPUT_SEARCH_DIR: "${{ inputs.search_dir }}"
