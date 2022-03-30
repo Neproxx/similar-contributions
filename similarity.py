@@ -8,6 +8,7 @@ nltk.download('stopwords')
 nltk.download('punkt')
 stop_words = set(stopwords.words('english'))
 punctuation = set([',', '.', ':', ';', '?', '!', '&'])
+non_informant_words = set(["course", "automation", "essay", "demo", "tutorial", "feedback", "open-source", "presentation", "proposal"])
 
 def filter_candidates(proposal_title, candidates):
     """
@@ -21,7 +22,8 @@ def filter_candidates(proposal_title, candidates):
 
 
 def is_irrelevant(token):
-    return token in stop_words or token in punctuation
+    # TODO: Since tokens and string are different things, it may be that this function does not work yet
+    return token in stop_words or token in punctuation or token in non_informant_words
 
 
 def is_similar(p_title, c_title, min_matches=1, min_sim=0.7):
@@ -38,8 +40,8 @@ def is_similar(p_title, c_title, min_matches=1, min_sim=0.7):
     """
     # Lemmatization and stemming do not sound reasonable for mostly technical terms
     # Thus removing stopwords and punctuation should be sufficient preprocessing
-    p_tokens = [t for t in word_tokenize(p_title) if not is_irrelevant(t)]
-    c_tokens = [t for t in word_tokenize(c_title) if not is_irrelevant(t)]
+    p_tokens = [t for t in word_tokenize(p_title.lower()) if not is_irrelevant(t)]
+    c_tokens = [t for t in word_tokenize(c_title.lower()) if not is_irrelevant(t)]
 
     matching_tokens = []
     for pt in p_tokens:
