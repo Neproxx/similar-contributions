@@ -16,3 +16,10 @@ runs:
     #  shell: bash
     - run: python ./main.py
       shell: bash
+      
+    # Set env according to https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#multiline-strings
+    - name: Read generated comment into env
+      run: |
+        echo 'GENERATED_COMMENT<<EOF' >> $GITHUB_ENV
+        cat $GITHUB_WORKSPACE/generated_comment.md >> $GITHUB_ENV
+        echo 'EOF' >> $GITHUB_ENV
