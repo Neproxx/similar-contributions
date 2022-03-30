@@ -33,13 +33,12 @@ print(f"min_sim: {min_sim}")
 
 path_contributions = os.path.join(path_repo, cont_folder)
 
-# Get candidate contributions
+# Get candidate from outstanding contributions
 outstanding_contributions = get_outstanding_contributions(path_contributions)
+# Get candidate from all contributions
 all_contributions = get_all_contributions(path_contributions, allowed_types, allowed_years)
-#print("Candidate contributions:")
-#for c in outstanding_contributions:
-#    print(c)
-#print("\n")
+# Also regard contributions of current course round as candidates
+all_contributions += get_all_contributions("contributions", allowed_types, ["contributions"])
 
 print("Candidate contributions:")
 for c in all_contributions:
