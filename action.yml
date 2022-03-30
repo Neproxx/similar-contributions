@@ -15,8 +15,8 @@ runs:
   using: "composite"
   steps:
     - run: |
-        echo "${{ github.event.inputs.search_dir }}"
-        echo "${{ github.event.inputs.filter }}"
+        echo "${{ inputs.search_dir }}"
+        echo "${{ inputs.filter }}"
       shell: bash
     - run: python -m pip install nltk  # Installing dependencies
       shell: bash
@@ -26,8 +26,8 @@ runs:
     #  shell: bash
     - run: python ./main.py
       env: |
-        INPUT_SEARCH_DIR: "${{ github.event.inputs.search_dir }}"
-        INPUT_FILTER: "${{ github.event.inputs.filter }}"
+        INPUT_SEARCH_DIR: "${{ inputs.search_dir }}"
+        INPUT_FILTER: "${{ inputs.filter }}"
       shell: bash
 
     # Set env according to https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#multiline-strings
