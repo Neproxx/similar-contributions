@@ -7,7 +7,7 @@ proposal_title = 'React CI testing' # TODO: Get from environment
 # Path for workflow
 path_repo = os.getenv("GITHUB_WORKSPACE")
 repo_owner = os.getenv("GITHUB_REPOSITORY")
-branch = os.getenv("GITHUB_REF_NAME")
+branch = os.getenv("GITHUB_BASE_REF")
 cont_folder = os.getenv("INPUT_SEARCH_DIR")
 #allowed_types = os.getenv("INPUT_FILTER") # TODO: parse
 #cont_folder = "attic"
@@ -18,7 +18,7 @@ allowed_types = ["essay", "course-automation", "demo", "presentation", "executab
 
 print(f"GITHUB_WORKSPACE = {os.getenv('GITHUB_WORKSPACE')}")
 print(f"GITHUB_REPOSITORY = {os.getenv('GITHUB_REPOSITORY')}")
-print(f"GITHUB_REF_NAME = {os.getenv('GITHUB_REF_NAME')}")
+print(f"GITHUB_BASE_REF = {os.getenv('GITHUB_BASE_REF')}")
 print(f"INPUT_SEARCH_DIR = {os.getenv('INPUT_SEARCH_DIR')}")
 print(f"INPUT_FILTER = {os.getenv('INPUT_FILTER')}")
 
