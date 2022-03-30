@@ -16,11 +16,11 @@ runs:
   steps:
     - run: python -m pip install nltk  # Installing dependencies
       shell: bash
-    - run: |
-        INPUT_SEARCH_DIR="${{ inputs.search_dir }}"
-        INPUT_FILTER="${{ inputs.filter }}"
-        python ./main.py
+    - run: python ./main.py
       shell: bash
+      env: |
+        INPUT_SEARCH_DIR: ${{ inputs.search_dir }}
+        INPUT_FILTER: ${{ inputs.filter }}
 
     # Set env according to https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#multiline-strings
     - name: Read generated comment into env
