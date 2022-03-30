@@ -1,12 +1,10 @@
-name: Test
+name: Write comment about similar contributions
 
 on: 
-  issues:
-    types: [opened, edited]
-  push:
   pull_request:
+    # types: [opened, edited, synchronized]
     types: [opened, edited]
-
+    
 jobs:
   # test is the job name
   test:
@@ -16,22 +14,27 @@ jobs:
       - uses: actions/setup-python@v3
         with:
           python-version: '3.7.12'
+      
+      # Get title from PR comment
+      # echo "${{ github.event.pull_request.body }}" | sed -n '/^## Title/,${p;/^## Names/q}' | sed '1d;$d' | sed '/^$/d'
+      - name: Get proposal title from PR body
+        run: |
+            echo 'PROPOSAL_TITLE<<EOF' >> $GITHUB_ENV
+            echo "${{ github.event.pull_request.body }}" | sed -n '/^## Title/,${p;/^## Names/q}' | sed '1d;$d' | sed '/^$/d' >> $GITHUB_ENV
+            echo 'EOF' >> $GITHUB_ENV
+      - name: echo proposal title
+        run: |
+            echo "${{ env.PROPOSAL_TITLE }}"
 
       # Note: uses action of this repository.
       # Will have to be replaced by action name once it is published
       - name: Run action
         uses: ./
 
-      # TODO: This has to be replaced with the creation of a PR comment in the future
-      # Use this action to create / update a PR comment: https://github.com/marketplace/actions/create-or-update-comment
-      # Use this action to find a previous PR comment which should be updated: https://github.com/peter-evans/find-comment
-      # Note: You can use ${{ github.event.pull_request.number }}
-      - name: Create Issue
-        uses: imjohnbo/issue-bot@3daae12aa54d38685d7ff8459fc8a2aee8cea98b
+      # Create comment under current pull request
+      - name: Comment current pull request
+        uses: alawiii521/current-pr-comment@v1.0
         with:
-          title: "Reading suggestions"
-          body: ${{ env.GENERATED_COMMENT }}
-          pinned: false
-        env:
+          comment: ${{ env.GENERATED_COMMENT }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
