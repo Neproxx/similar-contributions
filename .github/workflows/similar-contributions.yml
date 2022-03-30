@@ -18,7 +18,10 @@ jobs:
       # echo "PROPOSAL_TITLE=$(echo $'${ github.event.pull_request.body }' | sed -n '/^## Title/,${p;/^## Names/q}' | sed '1d;$d' | sed '/^$/d')" >> $GITHUB_ENV
       - name: Get proposal title from PR body
         run: |
-            echo "PROPOSAL_TITLE=$(echo ${ github.event.pull_request.body }" >> $GITHUB_ENV
+            echo 'PROPOSAL_TITLE<<EOF' >> $GITHUB_ENV
+            echo ${ github.event.pull_request.body } >> $GITHUB_ENV
+            echo 'EOF' >> $GITHUB_ENV
+            
             echo "${{ env.PROPOSAL_TITLE }}"
       
       # Note: uses action of this repository.
