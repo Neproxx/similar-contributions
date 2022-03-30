@@ -112,7 +112,11 @@ def get_all_contributions(path_contributions, allowed_types, allowed_years):
         ) :
             ctitle = extract_title_from_readme(path, cyear, stats)
             #print(f"\t {ctitle}")
-            rel_path = path[path.find(path_contributions):]
+            if os.name == "nt":
+                rel_path = path_contributions + "\\" + path.lstrip(os.getcwd())
+            else:
+                rel_path = path_contributions + "/" + path.lstrip(os.getcwd())
+            #print(rel_path)
             if (ctitle != ""): # Add candidate only if title could be added
                 candidates_all += [{
                                 "title": ctitle,

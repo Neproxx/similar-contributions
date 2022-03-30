@@ -10,8 +10,8 @@ path_repo = os.getenv("GITHUB_WORKSPACE")
 repo_owner = os.getenv("GITHUB_REPOSITORY")
 branch = os.getenv("GITHUB_BASE_REF")
 cont_folder = os.getenv("INPUT_SEARCH_DIR")
-allowed_types = os.getenv("INPUT_FILTER_TYPE").strip("[] \n").split(",")
-allowed_years = os.getenv("INPUT_FILTER_YEAR").strip("[] \n").split(",")
+allowed_types = os.getenv("INPUT_FILTER_TYPE").strip("[] \n").split(", ")
+allowed_years = os.getenv("INPUT_FILTER_YEAR").strip("[] \n").split(", ")
 min_sim = float(os.getenv("INPUT_MIN_WORD_SIMILARITY"))
 allowed_types = [t.strip("\'") for t in allowed_types]
 allowed_years = [t.strip("\'") for t in allowed_years]
@@ -61,7 +61,8 @@ for c in outstanding_conts_final:
 output += "\n## Similar topics found by comparing to all previous contributions:\n\n"
 
 for c in all_conts_final:
-    url = f"https://github.com/{repo_owner}/tree/{branch}/{cont_folder}/{c['relative_url']}"
+    
+    url = f"https://github.com/{repo_owner}/tree/{branch}/{c['relative_url']}"
     output += f"- [{c['title']}]({url})\n"
 
 path_output = os.path.join(path_repo, "generated_comment.md")
