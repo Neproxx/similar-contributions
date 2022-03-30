@@ -210,7 +210,8 @@ def extract_from_regular(path_readme, assignment_type, relative_url, stats):
         return []
 
 def get_regular_readme_section(line):
-    if "title" in line.lower() or "topic" in line.lower():
+    #if "title" in line.lower() or "topic" in line.lower():
+    if "title" in line.lower():
         return "title"
     else:
         return "irrelevant-section"
