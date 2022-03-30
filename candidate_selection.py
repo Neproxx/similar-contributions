@@ -81,7 +81,7 @@ def get_outstanding_contributions(path_contributions):
     return candidates_all
 
 ### Code for extracting candidates from the set of all contributions of a year
-def get_all_contributions(path_contributions, allowed_types):
+def get_all_contributions(path_contributions, allowed_types, allowed_years):
     """
     Extracts candidates from folders containing all contributions of the respective year.
     This method assumes that there is a subfolder for every year, which has another subfolder
@@ -95,43 +95,44 @@ def get_all_contributions(path_contributions, allowed_types):
     stats = Stats()
     candidates_all = []
     for year_folder in os.listdir(path_contributions):
-        path_year = os.path.join(path_contributions, year_folder)
-        if os.path.isdir(path_year):
-            for cyear_folder in os.listdir(path_year):
-                path_cyear = os.path.join(path_year, cyear_folder)
-                if os.path.isdir(path_cyear):
-                    for type_folder in os.listdir(path_cyear):
-                        if type_folder in allowed_types:
-                            path_type = os.path.join(path_cyear, type_folder)
-                            if os.path.isdir(path_type):
-                                # presentations are bundled in single readmes, so their extraction is different
-                                if type_folder == "presentation":
-                                    if os.path.isdir(path_type):
-                                        for path_pres_week_folder in os.listdir(path_type):
-                                            path_pres_week = os.path.join(path_type, path_pres_week_folder)
-                                            if os.path.isdir(path_pres_week):
-                                                for file in os.listdir(path_pres_week):
-                                                    path_readme = os.path.join(path_pres_week, file)
-                                                    if os.path.isfile(path_readme) and "readme" in file.lower():
-                                                        relative_url = "/".join([year_folder, cyear_folder, type_folder,
-                                                                                 path_pres_week, file])
-                                                        candidates_all += extract_from_presentations(path_readme, relative_url)
-                                else:
-                                    for team_folder in os.listdir(path_type):
-                                        path_team = os.path.join(path_type, team_folder)
-                                        if os.path.isdir(path_team):
-                                            found_readme = False
-                                            for file in os.listdir(path_team):
-                                                if "readme.md" in file.lower():
-                                                    path_readme = os.path.join(path_team, file)
-                                                    relative_url = "/".join([year_folder, cyear_folder, type_folder, team_folder, file])
-                                                    candidates_all += extract_from_regular(path_readme,
-                                                                                        assignment_type=type_folder,
-                                                                                        relative_url=relative_url,
-                                                                                        stats=stats)
-                                                    found_readme = True
-                                            if not found_readme:
-                                                warn(f"Could not find README.md in folder {path_team}, please check this contribution!")
+        if year_folder in allowed_years:
+            path_year = os.path.join(path_contributions, year_folder)
+            if os.path.isdir(path_year):
+                for cyear_folder in os.listdir(path_year):
+                    path_cyear = os.path.join(path_year, cyear_folder)
+                    if os.path.isdir(path_cyear):
+                        for type_folder in os.listdir(path_cyear):
+                            if type_folder in allowed_types:
+                                path_type = os.path.join(path_cyear, type_folder)
+                                if os.path.isdir(path_type):
+                                    # presentations are bundled in single readmes, so their extraction is different
+                                    if type_folder == "presentation":
+                                        if os.path.isdir(path_type):
+                                            for path_pres_week_folder in os.listdir(path_type):
+                                                path_pres_week = os.path.join(path_type, path_pres_week_folder)
+                                                if os.path.isdir(path_pres_week):
+                                                    for file in os.listdir(path_pres_week):
+                                                        path_readme = os.path.join(path_pres_week, file)
+                                                        if os.path.isfile(path_readme) and "readme" in file.lower():
+                                                            relative_url = "/".join([year_folder, cyear_folder, type_folder,
+                                                                                    path_pres_week, file])
+                                                            candidates_all += extract_from_presentations(path_readme, relative_url)
+                                    else:
+                                        for team_folder in os.listdir(path_type):
+                                            path_team = os.path.join(path_type, team_folder)
+                                            if os.path.isdir(path_team):
+                                                found_readme = False
+                                                for file in os.listdir(path_team):
+                                                    if "readme.md" in file.lower():
+                                                        path_readme = os.path.join(path_team, file)
+                                                        relative_url = "/".join([year_folder, cyear_folder, type_folder, team_folder, file])
+                                                        candidates_all += extract_from_regular(path_readme,
+                                                                                            assignment_type=type_folder,
+                                                                                            relative_url=relative_url,
+                                                                                            stats=stats)
+                                                        found_readme = True
+                                                if not found_readme:
+                                                    warn(f"Could not find README.md in folder {path_team}, please check this contribution!")
     print(f"Contributions extracted based on title / topic header: {stats.from_topic_section}")
     print(f"Contributions extracted from first line, because of missing title indicator: {stats.from_first_line}")
     print(f"Contributions that could not be extracted: {stats.ill_formatted}")
