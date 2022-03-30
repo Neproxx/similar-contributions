@@ -1,11 +1,8 @@
 name: Test
 
 on: 
-  issues:
-    types: [opened, edited]
-  push:
   pull_request:
-    types: [opened, edited]
+    types: [opened, edited, synchronize]
 
 jobs:
   # test is the job name
@@ -16,6 +13,17 @@ jobs:
       - uses: actions/setup-python@v3
         with:
           python-version: '3.7.12'
+      
+      # Get title from PR comment
+      # echo "${{ github.event.pull_request.body }}" | sed -n '/^## Title/,${p;/^## Names/q}' | sed '1d;$d' | sed '/^$/d'
+      - name: Get proposal title from PR body
+        run: |
+            echo 'PROPOSAL_TITLE<<EOF' >> $GITHUB_ENV
+            echo "${{ github.event.pull_request.body }}" | sed -n '/^## Title/,${p;/^## Names/q}' | sed '1d;$d' | sed '/^$/d' >> $GITHUB_ENV
+            echo 'EOF' >> $GITHUB_ENV
+      - name: echo proposal title
+        run: |
+            echo "${{ env.PROPOSAL_TITLE }}"
 
       # Note: uses action of this repository.
       # Will have to be replaced by action name once it is published

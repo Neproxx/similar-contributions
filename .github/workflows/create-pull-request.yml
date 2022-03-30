@@ -1,0 +1,34 @@
+name: create-pull-request
+
+on: 
+  issues:
+    types: [opened, edited]
+  push:  
+
+jobs:
+  # test is the job name
+  create-pull-request:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Run the Action
+        uses: devops-infra/action-pull-request@v0.4.2
+        with:
+          github_token: ${{ secrets.CONTROL_SECRET }}
+          source_branch: fabian_dev
+          target_branch: main
+          title: ${{ github.event.id }}
+          template: .github/EXAMPLE_README.md
+          #body: "**Automated pull request**"
+          #reviewer: octocat
+          #assignee: octocat
+          #label: enhancement
+          #milestone: My milestone
+          #draft: true
+          #old_string: "<!-- Add your description here -->"
+          #new_string: "** Automatic pull request**"
+          #get_diff: true
+          #ignore_users: "dependabot"
