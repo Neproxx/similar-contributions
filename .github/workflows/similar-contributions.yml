@@ -19,7 +19,7 @@ jobs:
       - name: Get proposal title from PR body
         run: |
             echo 'PROPOSAL_TITLE<<EOF' >> $GITHUB_ENV
-            echo "${ github.event.pull_request.body }" >> $GITHUB_ENV
+            echo "$(echo ${ github.event.pull_request.body })" >> $GITHUB_ENV
             echo 'EOF' >> $GITHUB_ENV
       - name: Echo proposal title
         run: |
