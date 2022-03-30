@@ -143,7 +143,10 @@ def extract_title_from_readme(path, year, stats):
         "Demo proposal:", "Video demo:", "Demo submission:", "DEMO 🎥 :", "demo -", "Demo:", "demo of ", 
         "course automation proposal:", "Course automation:", "Course-automation:" ]
     title = ""
-    path_readme = path + "\\README.md"
+    if os.name == "nt":
+        path_readme = path + "\\README.md"
+    else
+        path_readme = path + "/README.md"
     print(f"Extracting from: {path_readme}")
     if(year[0] in ['2019', '2020', '2021']):
         # parse first header
