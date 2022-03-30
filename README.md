@@ -8,45 +8,33 @@ The action assumes that there is one folder that contains all the contributions 
 
 - \<search-directory>/\<year-directory>/\<selected-readme>
 - \<search-directory>/\<year-directory>/\<contributions-directory>/\<assignment-type>/\<group-name>/\<group-readme>
-- \<search-directory>/\<year-directory>/\<contributions-directory>/\presentation/\<presentation-readme>
+- \<search-directory>/\<year-directory>/\<contributions-directory>/presentation/\<presentation-readme>
 
 The selected-readme is used to extract possible contributions for the first section of the resulting comment, while the group-readme and presentation-readme are used to extract possible contributions for the second section of the comment.
 
-##### Presentations
-... TODO ...
+### Similarity between titles
+We compare the title of the proposal and each previous contribution to determine whether they are similar. To this end, we remove stopwords and other non-informant words from both titles and then determine for each word in the proposal title, whether it has a counterpart in the contribution title. We compare words using the [difflib](https://docs.python.org/3/library/difflib.html) library which generates a similarity measure in the range [0,1] for two strings. Two words from the respective titles match if their similarity is above a specified threshold which can be defined with the input "TODO-GIVE-NAME" (see below for details). The authors state that a value above 0.6 represents a close match. Because some titles are extremely short while others are very long, we decided to include a contribution in the output comment if at least one word from the proposal title has a counterpart in the contribution title.
 
-### Assumptions
-- Specific folder structures
 
-TODO: 
-- explain how different contributions are found
-- explain what "similarity" means
-- explain limitations
+### Limitations
+We found that the group-readme files of the previous years have a very heterogenous format and can thus not be parsed in a fully valid manner. We apply heuristics as follows to extract the title of the contribution. We assume that if the markdown file contains a header "title", the following lines specify the title of the contribution. Although this also applies to many files where a header "topic" is present, many students used this header to then state a verbose description of the assignment, resulting in rather unreadable outputs. We thus only used the keyword "title" to indicate the contribution's title. If no such header can be found, it is assumed that the first header represents the title if it is not an empty string after removing non-informant keywords. As an example, the following header would not be extracted as a title: "Essay proposal:".
+
+Overall this approach leads to a medium accuracy in extracting the right titles, but is likely to miss a lot of titles due to the often arbitrary formatting. For this reason, we recommend generating the action's output only based on the selected-readme, i.e. generate only the first section of the comment. 
 
 
 ## Inputs
 
-### `github_token`
+### `example 1`
 
-**Required** The GITHUB_TOKEN secret.
+**Required** My description...
 
-### `text`
+### `example2`
 
-**Required** The text which is parsed for a repository.
+**Required** My other description....
 
-### Minimum Requirements
-The minimum amount of a specific stat that is required for the action to pass.
+## Output
 
-The following requirement inputs can be passed into the action, the default is 0:
-`min_stars`,
-`min_watchers`,
-`min_contributors`,
-`min_forks`,
-`min_commits`,
-`min_commits_last_year`,
-`min_open_issues`
-
-## Outputs
+A comment is generated for a pull request when it is opened or edited.
 
 ### Workflow for DevOps Course
 ```
