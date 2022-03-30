@@ -30,6 +30,14 @@ jobs:
       - name: Run action
         uses: ./
 
+
+      # Create comment under current pull request
+      - name: Comment current pull request
+        uses: alawiii521/current-pr-comment@v1.0
+        with:
+          comment: ${{ env.GENERATED_COMMENT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       # TODO: This has to be replaced with the creation of a PR comment in the future
       # Use this action to create / update a PR comment: https://github.com/marketplace/actions/create-or-update-comment
       # Use this action to find a previous PR comment which should be updated: https://github.com/peter-evans/find-comment
