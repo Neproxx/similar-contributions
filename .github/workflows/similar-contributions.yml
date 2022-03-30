@@ -15,10 +15,13 @@ jobs:
           python-version: '3.7.12'
       
       # Get title from PR comment
-      # echo "PROPOSAL_TITLE=$(echo "${ github.event.pull_request.body }" | sed -n '/^## Title/,${p;/^## Names/q}' | sed '1d;$d' | sed '/^$/d')" >> $GITHUB_ENV
+      # echo "${{ github.event.pull_request.body }}" | sed -n '/^## Title/,${p;/^## Names/q}' | sed '1d;$d' | sed '/^$/d'
       - name: Get proposal title from PR body
         run: |
-            echo "${{ github.event.pull_request.body }}" | sed -n '/^## Title/,${p;/^## Names/q}' | sed '1d;$d' | sed '/^$/d'
+            echo "PROPOSAL_TITLE=$(echo "${{ github.event.pull_request.body }}" | sed -n '/^## Title/,${p;/^## Names/q}' | sed '1d;$d' | sed '/^$/d')" >> $GITHUB_ENV
+      - name: echo proposal title
+        run: |
+            echo "${{ env.PROPOSAL_TITLE }}"
 
       # Note: uses action of this repository.
       # Will have to be replaced by action name once it is published
