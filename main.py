@@ -9,12 +9,18 @@ path_repo = os.getenv("GITHUB_WORKSPACE")
 repo_owner = os.getenv("GITHUB_REPOSITORY")
 branch = os.getenv("GITHUB_REF_NAME")
 cont_folder = os.getenv("INPUT_SEARCH_DIR")
-allowed_types = os.getenv("INPUT_FILTER") # TODO: parse
+#allowed_types = os.getenv("INPUT_FILTER") # TODO: parse
 #cont_folder = "attic"
 #branch = "main"
 #path_repo = 'C:\\Users\\marce\\Documents\\work\\KTH\Devops\\similar-contributions'
 #repo_owner = "KTH/devops-course"
-#allowed_types = ["essay", "course-automation", "demo", "presentation", "executable-tutorial", "tutorial", "open-source", "open"]
+allowed_types = ["essay", "course-automation", "demo", "presentation", "executable-tutorial", "tutorial", "open-source", "open"]
+
+print(f"GITHUB_WORKSPACE = {os.getenv('GITHUB_WORKSPAC')}")
+print(f"GITHUB_REPOSITORY = {os.getenv('GITHUB_REPOSITOR')}")
+print(f"GITHUB_REF_NAME = {os.getenv('GITHUB_REF_NAM')}")
+print(f"INPUT_SEARCH_DIR = {os.getenv('INPUT_SEARCH_DI')}")
+print(f"INPUT_FILTER = {os.getenv('INPUT_FILTE')}")
 
 path_contributions = os.path.join(path_repo, cont_folder)
 
