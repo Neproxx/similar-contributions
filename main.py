@@ -36,7 +36,7 @@ path_contributions = os.path.join(path_repo, cont_folder)
 # Get candidate from outstanding contributions
 outstanding_contributions = get_outstanding_contributions(path_contributions)
 # Get candidate from all contributions
-all_contributions = get_all_contributions(path_contributions, allowed_types, allowed_years)
+all_contributions = get_all_contributions(cont_folder, allowed_types, allowed_years)
 # Also regard contributions of current course round as candidates
 all_contributions += get_all_contributions("contributions", allowed_types, ["contributions"])
 
