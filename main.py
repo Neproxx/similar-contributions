@@ -56,14 +56,14 @@ There are many good contributions from the last years that can help as inspirati
 
 """
 for c in outstanding_conts_final:
-    output += f"- [{c['title']}]({c['url']})\n"
+    output += f"- [{c['type']}] [{c['title']}]({c['url']})\n"
 
 output += "\n## Similar topics found by comparing to all previous contributions:\n\n"
 
 for c in all_conts_final:
     
     url = f"https://github.com/{repo_owner}/tree/{branch}/{c['relative_url']}"
-    output += f"- [{c['title']}]({url})\n"
+    output += f"- [{c['type']}] [{c['title']}]({url})\n"
 
 path_output = os.path.join(path_repo, "generated_comment.md")
 with open(path_output, "w", encoding="utf8") as f:
