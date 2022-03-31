@@ -56,7 +56,7 @@ There are many good contributions from the last years that can help as inspirati
 
 """
 for c in outstanding_conts_final:
-    output += f"- [{c['type']}] [{c['title']}]({c['url']})\n"
+    output += f"- [{c['title']}]({c['url']})\n"
 
 output += "\n## Similar topics found by comparing to all previous contributions:\n\n"
 
