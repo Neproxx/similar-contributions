@@ -63,7 +63,7 @@ output += "\n## Similar topics found by comparing to all previous contributions:
 for c in all_conts_final:
     
     url = f"https://github.com/{repo_owner}/tree/{branch}/{c['relative_url']}"
-    output += f"- [{c['type']}] [{c['title']}]({url})\n"
+    output += f"- [{c['title']}]({url})\n"
 
 path_output = os.path.join(path_repo, "generated_comment.md")
 with open(path_output, "w", encoding="utf8") as f:
