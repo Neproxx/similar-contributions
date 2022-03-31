@@ -185,7 +185,7 @@ def extract_title_from_readme(path, year, stats):
         title_before = title
         #strip titles from unnecessary info
         for str in title_strip_until2021:
-            title = title.lower().replace(str.lower(), '')
+            title = re.sub('(?i)'+re.escape(str), lambda m: "", title)
         if title_before != title:
             stats.removed_substrings += 1
     elif(year == ['2022']):
@@ -205,4 +205,4 @@ def extract_title_from_readme(path, year, stats):
             stats.from_topic_section += 1
         else:
             stats.ill_formatted += 1
-    return title.lstrip()
+    return title.replace("\n", ' ').lstrip().strip()
