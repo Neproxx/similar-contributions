@@ -135,10 +135,10 @@ def extract_title_from_readme(path, year, stats):
     """
     Recording Mode part inspired by https://sopython.com/canon/92/extract-text-from-a-file-between-two-markers/
     """
-    title_filter_until2021 = ["Agenda for Student", "Remarkable presentations from", "Members:", "This project is a part of", 
+    title_filter_until2021 = ["Agenda for Student", "Remarkable presentations from", "Members:", "Member:", "This project is a part of", 
         "Adam Hasselberg and Aigars Tumanis", "Author:", "Selected 2021", "Please see the grading criteria for live demo", "<img src =",
         "[gocd](https://www.gocd.org/pipelines-as-code.html)", "paul löwenström: paulher@kth.se", "this folder contains students", 
-        "member: eyrún þrastardóttir (eyrun@kth.se)", "anders sjöbom asjobom@kth.se"]
+        "anders sjöbom asjobom@kth.se"]
     title_strip_until2021 = ["Topic:", "##  ", "****topic**** : #"
         "presentation proposal:", "presentation submission:", "presentation -", "presentation:", 
         "opensource contribution:", "open source contribution:", "open-source:", "opentask: ", 
@@ -205,4 +205,6 @@ def extract_title_from_readme(path, year, stats):
             stats.from_topic_section += 1
         else:
             stats.ill_formatted += 1
+    #Remove markdown URLs from title name
+    title = re.sub(r"\[(.+)\]\(.+\)", r"\1", title)
     return title.replace("\n", ' ').lstrip().strip()
