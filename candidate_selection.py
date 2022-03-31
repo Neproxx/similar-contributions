@@ -86,6 +86,7 @@ class Stats:
         self.from_first_line = 0
         self.ill_formatted = 0
         self.removed_substrings = 0
+        self.filtered_contributions = 0
 
 ### Code for extracting candidates from the set of all contributions of a year
 def get_all_contributions(path_contributions, allowed_types, allowed_years):
@@ -128,6 +129,7 @@ def get_all_contributions(path_contributions, allowed_types, allowed_years):
     print(f"Contributions extracted from first line, because of missing title indicator: {stats.from_first_line}")
     print(f"Contributions that could not be extracted: {stats.ill_formatted}")
     print(f"Contributions titles, where substrings were stripped: {stats.removed_substrings}")
+    print(f"Contributions titles, that were filtered: {stats.filtered_contributions}")
     return candidates_all
 
 
@@ -137,16 +139,16 @@ def extract_title_from_readme(path, year, stats):
     """
     title_filter_until2021 = ["Agenda for Student", "Remarkable presentations from", "Members:", "Member:", "This project is a part of", 
         "Adam Hasselberg and Aigars Tumanis", "Author:", "Selected 2021", "Please see the grading criteria for live demo", "<img src =",
-        "[gocd](https://www.gocd.org/pipelines-as-code.html)", "paul löwenström: paulher@kth.se", "this folder contains students", 
-        "anders sjöbom asjobom@kth.se"]
-    title_strip_until2021 = ["Topic:", "##  ", "****topic**** : #"
+        "Paul Löwenström: paulher@kth.se", "This folder contains students", "anders sjöbom asjobom@kth.se"]
+    title_strip_until2021 = ["Topic:", "##  ", "****topic**** : #",
         "presentation proposal:", "presentation submission:", "presentation -", "presentation:", 
-        "opensource contribution:", "open source contribution:", "open-source:", "opentask: ", 
+        "Open-source contribution proposal:", "opensource contribution:", "open source contribution:", "open-source:", "opentask: ", 
         "executable-tutorial:", "Executable Tutorial:", "executible Tutorial:", "exectuable tutorial:", "Executable Tutorial Submission:", 
         "tutorial proposal -", "Tutorial Submission:", "Tutorial submission:", "Tutorial Proposal:", "Complete Tutorial:", "Tutorial:",
         "essay proposal :", "essay proposal -", "Essay proposal:", "Essay:", 
-        "Demo proposal:", "Video demo:", "Demo submission:", "DEMO 🎥 :", "demo -", "Demo:", "demo of ", 
-        "course automation proposal:", "Course automation:", "Course-automation:" ]
+        "Video demo submission:", "Demo Submission After feedback:", "Demo proposal:", "Video demo:", "Demo submission:", "DEMO 🎥 :", "demo -", "Demo:", "demo of ", 
+        "course automation proposal:", "Course automation:", "Course-automation:", 
+        "Proposal "]
     title = ""
     if os.name == "nt":
         path_readme = path + "\\README.md"
@@ -160,6 +162,8 @@ def extract_title_from_readme(path, year, stats):
             first_line = fp.readline()
             if(not any(str in first_line for str in title_filter_until2021)):
                 header = first_line.strip(" \n#")
+            else:
+                stats.filtered_contributions += 1
         # maybe there is a topic section
         with open(path_readme, "r", encoding="utf8", errors="ignore") as fp:
             topic = ""
@@ -207,4 +211,15 @@ def extract_title_from_readme(path, year, stats):
             stats.ill_formatted += 1
     #Remove markdown URLs from title name
     title = re.sub(r"\[(.+)\]\(.+\)", r"\1", title)
-    return title.replace("\n", ' ').lstrip().strip()
+    #Remove double spaces
+    title = re.sub("\s\s+", " ", title)
+    #Remove markdown chars used for highlighting
+    for ch in ['*', '_']:
+        title = title.replace(ch, '')
+    #Replace newline chars with spaces
+    title = title.replace("\n", ' ')
+    #Remove all leading and trailing spaces
+    title = title.lstrip().strip()
+    #Capitalize first letter
+    title = title.capitalize()
+    return title
