@@ -221,5 +221,6 @@ def extract_title_from_readme(path, year, stats):
     #Remove all leading and trailing spaces
     title = title.lstrip().strip()
     #Capitalize first letter
-    title = title[0].upper() + title[1:]
+    if title != "":
+        title = title[0].upper() + title[1:]
     return title
