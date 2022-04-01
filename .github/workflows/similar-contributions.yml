@@ -29,7 +29,7 @@ jobs:
       # Note: uses action of this repository.
       # Will have to be replaced by action name once it is published
       - name: Run action
-        if: env.PROPOSAL_TITLE != ""
+        if: env.PROPOSAL_TITLE != ''
         uses: ./
       
       # Leads to error when keyword "automatic" is in proposal title
@@ -38,7 +38,7 @@ jobs:
 
       # Create comment under current pull request
       - name: Find Comment
-        if: env.PROPOSAL_TITLE != ""
+        if: env.PROPOSAL_TITLE != ''
         uses: peter-evans/find-comment@v2
         id: fc # this tag will be used for the conditional selection of either creating or updating
         with:
@@ -47,14 +47,14 @@ jobs:
           body-includes: Reading Recommendations
 
       - name: Create comment
-        if: steps.fc.outputs.comment-id == '' && env.PROPOSAL_TITLE != ""
+        if: steps.fc.outputs.comment-id == '' && env.PROPOSAL_TITLE != ''
         uses: peter-evans/create-or-update-comment@v2
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body: ${{ env.GENERATED_COMMENT }}
 
       - name: Update comment
-        if: steps.fc.outputs.comment-id != '' && env.PROPOSAL_TITLE != ""
+        if: steps.fc.outputs.comment-id != '' && env.PROPOSAL_TITLE != ''
         uses: peter-evans/create-or-update-comment@v2
         with:
           comment-id: ${{ steps.fc.outputs.comment-id }}
