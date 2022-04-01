@@ -13,20 +13,24 @@ proposal_title = re.sub("\s\s+", " ", proposal_title)
 proposal_title = proposal_title.strip()
 # Path for workflow
 path_repo = os.getenv("GITHUB_WORKSPACE")
-repo_owner = os.getenv("GITHUB_REPOSITORY")
-branch = os.getenv("GITHUB_BASE_REF")
-cont_folder = os.getenv("INPUT_SEARCH_DIR")
-allowed_types = os.getenv("INPUT_FILTER_TYPE").strip("[] \n").split(", ")
-allowed_years = os.getenv("INPUT_FILTER_YEAR").strip("[] \n").split(", ")
-min_sim = float(os.getenv("INPUT_MIN_WORD_SIMILARITY"))
-allowed_types = [t.strip("\'") for t in allowed_types]
-allowed_years = [t.strip("\'") for t in allowed_years]
-#cont_folder = "attic"
-#branch = "main"
 #path_repo = 'C:\\Users\\marce\\Documents\\work\\KTH\Devops\\similar-contributions'
+repo_owner = os.getenv("GITHUB_REPOSITORY")
 #repo_owner = "KTH/devops-course"
+branch = os.getenv("GITHUB_BASE_REF")
+#branch = "main"
+cont_folder = os.getenv("INPUT_SEARCH_DIR")
+#cont_folder = "attic"
+allowed_types = os.getenv("INPUT_FILTER_TYPE").strip("[] \n").split(", ")
+allowed_types = [t.strip("\'") for t in allowed_types]
 #allowed_types = ["essay", "course-automation", "demo", "presentation", "executable-tutorial", "tutorial", "open-source", "open"]
+allowed_years = os.getenv("INPUT_FILTER_YEAR").strip("[] \n").split(", ")
+allowed_years = [t.strip("\'") for t in allowed_years]
+#allowed_types = ["2019", "2020", "2021"]
+extra_stopwords = os.getenv("INPUT_EXTRA_STOPWORDS").strip("[] \n").split(", ")
+extra_stopwords = [t.strip("\'") for t in extra_stopwords]
+min_sim = float(os.getenv("INPUT_MIN_WORD_SIMILARITY"))
 
+#Print some debug info
 print(f"GITHUB_WORKSPACE = {os.getenv('GITHUB_WORKSPACE')}")
 print(f"GITHUB_REPOSITORY = {os.getenv('GITHUB_REPOSITORY')}")
 print(f"GITHUB_BASE_REF = {os.getenv('GITHUB_BASE_REF')}")
@@ -37,9 +41,11 @@ print(f"allowed_years: {allowed_years}")
 print(f"min_sim: {min_sim}")
 print(f"proposal_title: {proposal_title}")
 
+#######################
+# CANDIDATE SEARCHING #
+#######################
 
 path_contributions = os.path.join(path_repo, cont_folder)
-
 # Get candidate from outstanding contributions
 outstanding_contributions = get_outstanding_contributions(path_contributions)
 # Get candidate from all contributions
@@ -52,9 +58,18 @@ for c in all_contributions:
     print(c)
 print("\n")
 
+#######################
+# CANDIDATE SELECTION #
+#######################
+
 # Filter candidates based on similarity to proposal title
-outstanding_conts_final = filter_candidates(proposal_title, outstanding_contributions, min_sim)
-all_conts_final = filter_candidates(proposal_title, all_contributions, min_sim)
+outstanding_conts_final = filter_candidates(proposal_title, outstanding_contributions, min_sim, extra_stopwords)
+all_conts_final = filter_candidates(proposal_title, all_contributions, min_sim, extra_stopwords)
+
+#######################
+#    WRITE CONMMENT   #
+#######################
+
 
 # Write similar contributions to file that can be read from the github workflow
 # and then turned into a PR comment

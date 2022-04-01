@@ -10,23 +10,27 @@ stop_words = set(stopwords.words('english'))
 punctuation = set([',', '.', ':', ';', '?', '!', '&'])
 non_informant_words = set(["course", "automation", "essay", "demo", "tutorial", "feedback", "open-source", "presentation", "proposal"])
 
-def filter_candidates(proposal_title, candidates, min_sim):
+def filter_candidates(proposal_title, candidates, min_sim, extra_stopwords):
     """
     Return those candidates contributions that are similar to the proposal.
     """
     similar_contributions = []
     for candidate in candidates:
-        if is_similar(proposal_title, candidate["title"], min_sim=min_sim):
+        if is_similar(proposal_title, candidate["title"], min_sim=min_sim, extra_stopwords=extra_stopwords):
             similar_contributions.append(candidate)
     return similar_contributions
 
 
-def is_irrelevant(token):
+def is_irrelevant(token, extra_stopwords):
     # TODO: Since tokens and string are different things, it may be that this function does not work yet
-    return token in stop_words or token in punctuation or token in non_informant_words
+    irrelevant_flag = token in stop_words or token in punctuation or token in non_informant_words 
+    # check if token is in extra_stopwords
+    irrelevant_flag |= token in map(str.lower, extra_stopwords)
+    if(token in map(str.lower, extra_stopwords)):
+        print(token)
+    return irrelevant_flag
 
-
-def is_similar(p_title, c_title, min_matches=1, min_sim=0.7):
+def is_similar(p_title, c_title, min_matches=1, min_sim=0.7, extra_stopwords=[]):
     """
     Checks whether the proposal title has at least min_matches words that
     are similar to the candidate title according to the threshold min_sim.
@@ -40,8 +44,8 @@ def is_similar(p_title, c_title, min_matches=1, min_sim=0.7):
     """
     # Lemmatization and stemming do not sound reasonable for mostly technical terms
     # Thus removing stopwords and punctuation should be sufficient preprocessing
-    p_tokens = [t for t in word_tokenize(p_title.lower()) if not is_irrelevant(t)]
-    c_tokens = [t for t in word_tokenize(c_title.lower()) if not is_irrelevant(t)]
+    p_tokens = [t for t in word_tokenize(p_title.lower()) if not is_irrelevant(t, extra_stopwords)]
+    c_tokens = [t for t in word_tokenize(c_title.lower()) if not is_irrelevant(t, extra_stopwords)]
 
     matching_tokens = []
     for pt in p_tokens:
