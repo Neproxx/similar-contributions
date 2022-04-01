@@ -18,6 +18,10 @@ inputs:
     description: Treshold for similiarity check of keywords
     required: true
     default: "0.8"
+  extra_stopwords:
+    description: Add extra stopwords, that are not regarded when comparing the proposal titles
+    required: true
+    default: "['testing', 'automated', 'pipeline', 'deployment']"
 runs:
   using: "composite"
   steps:
@@ -30,6 +34,7 @@ runs:
         INPUT_FILTER_TYPE: ${{ inputs.filter_type }}
         INPUT_FILTER_YEAR: ${{ inputs.filter_year }}
         INPUT_MIN_WORD_SIMILARITY: ${{ inputs.min_word_similarity }}
+        INPUT_EXTRA_STOPWORDS: ${{ inputs.extra_stopwords }}
 
     # Set env according to https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#multiline-strings
     - name: Read generated comment into env
