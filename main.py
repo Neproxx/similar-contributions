@@ -27,18 +27,10 @@ extra_stopwords = os.getenv("INPUT_EXTRA_STOPWORDS").strip("[] \n").split(", ")
 extra_stopwords = [t.strip("\'") for t in extra_stopwords]
 min_sim = float(os.getenv("INPUT_MIN_WORD_SIMILARITY"))
 sort_option = os.getenv("INPUT_SORT_OPTION")
-header_filter_until2021 = ["Agenda for Student", "Remarkable presentations from", "Members:", "Member:", "This project is a part of", 
-    "Adam Hasselberg and Aigars Tumanis", "Author:", "Selected 2021", "Please see the grading criteria for live demo", "<img src =",
-    "Paul Löwenström: paulher@kth.se", "This folder contains students", "anders sjöbom asjobom@kth.se"]
-substr_strip_until2021 = ["Topic:", "##  ", "****topic**** : #",
-    "presentation proposal:", "presentation submission:", "presentation -", "presentation:", 
-    "Open-source contribution proposal:", "opensource contribution:", "open source contribution:", "open-source:", "opentask: ", 
-    "executable-tutorial:", "Executable Tutorial:", "executible Tutorial:", "exectuable tutorial:", "Executable Tutorial Submission:", 
-    "tutorial proposal -", "Tutorial Submission:", "Tutorial submission:", "Tutorial Proposal:", "Complete Tutorial:", "Tutorial:",
-    "essay proposal :", "essay proposal -", "Essay proposal:", "Essay:", 
-    "Video demo submission:", "Demo Submission After feedback:", "Demo proposal:", "Video demo:", "Demo submission:", "DEMO 🎥 :", "demo -", "Demo:", "demo of ", 
-    "course automation proposal:", "Course automation:", "Course-automation:", 
-    "Proposal "]
+header_filter_until2021 = os.getenv("INPUT_HEADER_FILTER").strip("[] \n").split(", ")
+header_filter_until2021 = [t.strip("\'") for t in header_filter_until2021]
+substr_strip_until2021 = os.getenv("INPUT_SUBSTR_FILTER").strip("[] \n").split(", "
+header_filter_until2021 = [t.strip("\'") for t in header_filter_until2021]
 
 #Print some debug info
 print(f"GITHUB_WORKSPACE = {os.getenv('GITHUB_WORKSPACE')}")
