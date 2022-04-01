@@ -23,8 +23,8 @@ allowed_types = [t.strip("\'") for t in allowed_types]
 allowed_years = os.getenv("INPUT_FILTER_YEAR").strip("[] \n").split(", ")
 allowed_years = [t.strip("\'") for t in allowed_years]
 #allowed_types = ["2019", "2020", "2021"]
-extra_stopwords = os.getenv("INPUT_EXTRA_STOPWORDS").strip("[] \n").split(", ")
-extra_stopwords = [t.strip("\'") for t in extra_stopwords]
+words_ignore = os.getenv("INPUT_WORDS_IGNORE").strip("[] \n").split(", ")
+words_ignore = [t.strip("\'") for t in words_ignore]
 min_sim = float(os.getenv("INPUT_MIN_WORD_SIMILARITY"))
 sort_option = os.getenv("INPUT_SORT_OPTION")
 header_filter_until2021 = os.getenv("INPUT_HEADER_FILTER").strip("[] \n").split(", ")
@@ -84,8 +84,8 @@ print("\n")
 #######################
 
 # Filter candidates based on similarity to proposal title
-outstanding_conts_final = filter_candidates(proposal_title, outstanding_contributions, min_sim, extra_stopwords)
-all_conts_final = filter_candidates(proposal_title, all_contributions, min_sim, extra_stopwords)
+outstanding_conts_final = filter_candidates(proposal_title, outstanding_contributions, min_sim, words_ignore)
+all_conts_final = filter_candidates(proposal_title, all_contributions, min_sim, words_ignore)
 
 #######################
 #  GENERATE CONMMENT  #

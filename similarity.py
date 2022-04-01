@@ -2,6 +2,7 @@ import os
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+from nltk.stem.snowball import SnowballStemmer
 from difflib import SequenceMatcher
 
 nltk.download('stopwords')
@@ -10,27 +11,27 @@ stop_words = set(stopwords.words('english'))
 punctuation = set([',', '.', ':', ';', '?', '!', '&'])
 non_informant_words = set(["course", "automation", "essay", "demo", "tutorial", "feedback", "open-source", "presentation", "proposal"])
 
-def filter_candidates(proposal_title, candidates, min_sim, extra_stopwords):
+def filter_candidates(proposal_title, candidates, min_sim, words_ignore):
     """
     Return those candidates contributions that are similar to the proposal.
     """
+    stemmer = SnowballStemmer("english")
     similar_contributions = []
     for candidate in candidates:
-        matching_tokens, similar_flag = is_similar(proposal_title, candidate["title"], min_sim=min_sim, extra_stopwords=extra_stopwords)
+        matching_tokens, similar_flag = is_similar(proposal_title, candidate["title"],
+                                                  stemmer, min_sim, words_ignore)
         if(similar_flag):
             candidate["matching_token"] = matching_tokens
             similar_contributions.append(candidate)
     return similar_contributions
 
 
-def is_irrelevant(token, extra_stopwords):
-    # TODO: Since tokens and string are different things, it may be that this function does not work yet
+def is_irrelevant(token, words_ignore, stemmer):
     irrelevant_flag = token in stop_words or token in punctuation or token in non_informant_words 
-    # check if token is in extra_stopwords
-    irrelevant_flag |= token in map(str.lower, extra_stopwords)
+    irrelevant_flag |= stemmer.stem(token) in [stemmer.stem(s.lower()) for s in words_ignore]
     return irrelevant_flag
 
-def is_similar(p_title, c_title, min_matches=1, min_sim=0.7, extra_stopwords=[]):
+def is_similar(p_title, c_title, stemmer, min_sim=0.7, words_ignore=[], min_matches=1):
     """
     Checks whether the proposal title has at least min_matches words that
     are similar to the candidate title according to the threshold min_sim.
@@ -44,8 +45,8 @@ def is_similar(p_title, c_title, min_matches=1, min_sim=0.7, extra_stopwords=[])
     """
     # Lemmatization and stemming do not sound reasonable for mostly technical terms
     # Thus removing stopwords and punctuation should be sufficient preprocessing
-    p_tokens = [t for t in word_tokenize(p_title) if not is_irrelevant(t.lower(), extra_stopwords)]
-    c_tokens = [t for t in word_tokenize(c_title) if not is_irrelevant(t.lower(), extra_stopwords)]
+    p_tokens = [t for t in word_tokenize(p_title) if not is_irrelevant(t.lower(), words_ignore, stemmer)]
+    c_tokens = [t for t in word_tokenize(c_title) if not is_irrelevant(t.lower(), words_ignore, stemmer)]
 
     matching_tokens = []
     for pt in p_tokens:
