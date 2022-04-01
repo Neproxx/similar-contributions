@@ -29,8 +29,8 @@ min_sim = float(os.getenv("INPUT_MIN_WORD_SIMILARITY"))
 sort_option = os.getenv("INPUT_SORT_OPTION")
 header_filter_until2021 = os.getenv("INPUT_HEADER_FILTER").strip("[] \n").split(", ")
 header_filter_until2021 = [t.strip("\'") for t in header_filter_until2021]
-substr_strip_until2021 = os.getenv("INPUT_SUBSTR_FILTER").strip("[] \n").split(", "
-header_filter_until2021 = [t.strip("\'") for t in header_filter_until2021]
+substr_strip_until2021 = os.getenv("INPUT_SUBSTR_FILTER").strip("[] \n").split(", ")
+substr_strip_until2021 = [t.strip("\'") for t in substr_strip_until2021]
 
 #Print some debug info
 print(f"GITHUB_WORKSPACE = {os.getenv('GITHUB_WORKSPACE')}")
