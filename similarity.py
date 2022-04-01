@@ -8,7 +8,7 @@ from difflib import SequenceMatcher
 nltk.download('stopwords')
 nltk.download('punkt')
 stop_words = set(stopwords.words('english'))
-punctuation = set([',', '.', ':', ';', '?', '!', '&'])
+punctuation = set([',', '.', ':', ';', '?', '!', '&', '-', '_', '`'])
 non_informant_words = set(["course", "automation", "essay", "demo", "tutorial", "feedback", "open-source", "presentation", "proposal"])
 
 def filter_candidates(proposal_title, candidates, min_sim, words_ignore):
@@ -59,6 +59,6 @@ def is_similar(p_title, c_title, stemmer, min_sim=0.7, words_ignore=[], min_matc
     #print(p_tokens)
     #print(c_tokens)
     #print(f"Similar_tokens: {matching_tokens}")
-    return matching_tokens, len(matching_tokens) >= 1
+    return matching_tokens, len(matching_tokens) >= min_matches
 
 
