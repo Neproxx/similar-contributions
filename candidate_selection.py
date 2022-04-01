@@ -211,15 +211,15 @@ def extract_title_from_readme(path, year, stats):
             stats.ill_formatted += 1
     #Remove markdown URLs from title name
     title = re.sub(r"\[(.+)\]\(.+\)", r"\1", title)
-    #Remove double spaces
-    title = re.sub("\s\s+", " ", title)
     #Remove markdown chars used for highlighting
     for ch in ['*', '_']:
         title = title.replace(ch, '')
     #Replace newline chars with spaces
     title = title.replace("\n", ' ')
+    #Remove double spaces
+    title = re.sub("\s\s+", " ", title)
     #Remove all leading and trailing spaces
-    title = title.lstrip().strip()
+    title = title.strip()
     #Capitalize first letter
     if title != "":
         title = title[0].upper() + title[1:]
