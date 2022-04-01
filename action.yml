@@ -1,5 +1,9 @@
 name: 'similar-contributions'
 description: 'Searches for similar contributions by comparing previous pull requests to the current proposal title'
+branding:
+  icon: 'bell'  
+  color: 'orange'
+
 
 inputs:
   cont_dir:
