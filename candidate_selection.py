@@ -56,6 +56,7 @@ def get_candidates_from(path_readme, allowed_types):
     on_record = False
     rec_line = ""
     rec_depth = 0
+    rec_type = ""
     with open(path_readme, "r", encoding="utf8") as f:
         for line in f.readlines():
             if is_heading(line):
@@ -66,12 +67,14 @@ def get_candidates_from(path_readme, allowed_types):
                     candidates = update_candidates(line, cur_type, candidates)
                 if is_partial_pattern(line.strip()) or on_record:
                     on_record = True
+                    rec_type = cur_type
                     rec_line += " " + line.strip()
                     rec_depth += 1
                     if is_full_pattern(rec_line):
-                        candidates = update_candidates(rec_line, cur_type, candidates)
+                        candidates = update_candidates(rec_line, rec_type, candidates)
                     if is_full_pattern(rec_line) or rec_depth >= 3:
                         on_record = False
+                        rec_type = ""
                         rec_line = ""
                         rec_depth = 0
     return candidates
