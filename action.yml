@@ -2,10 +2,14 @@ name: 'similar-contributions'
 description: 'Searches for similar contributions by comparing previous pull requests to the current proposal title'
 
 inputs:
-  search_dir:
+  cont_dir:
     description: Directory containing the contributions
     required: true
-    default: "attic"
+    default: "cont"
+  attic_dir:
+    description: Directory containing the contributions
+    required: true
+    default: "attic" 
   filter_type:
     description: Filter for contribution types that are should be regarded
     required: true
@@ -38,7 +42,8 @@ runs:
     - run: python ./main.py
       shell: bash
       env:
-        INPUT_SEARCH_DIR: ${{ inputs.search_dir }}
+        INPUT_CONT_DIR: ${{ inputs.cont_dir }}
+        INPUT_ATTIC_DIR: ${{ inputs.attic_dir }}
         INPUT_FILTER_TYPE: ${{ inputs.filter_type }}
         INPUT_FILTER_YEAR: ${{ inputs.filter_year }}
         INPUT_MIN_WORD_SIMILARITY: ${{ inputs.min_word_similarity }}
