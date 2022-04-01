@@ -16,7 +16,9 @@ def filter_candidates(proposal_title, candidates, min_sim, extra_stopwords):
     """
     similar_contributions = []
     for candidate in candidates:
-        if is_similar(proposal_title, candidate["title"], min_sim=min_sim, extra_stopwords=extra_stopwords):
+        matching_tokens, similar_flag = is_similar(proposal_title, candidate["title"], min_sim=min_sim, extra_stopwords=extra_stopwords)
+        if(similar_flag):
+            candidate["matching_token"] = matching_tokens
             similar_contributions.append(candidate)
     return similar_contributions
 
@@ -26,8 +28,6 @@ def is_irrelevant(token, extra_stopwords):
     irrelevant_flag = token in stop_words or token in punctuation or token in non_informant_words 
     # check if token is in extra_stopwords
     irrelevant_flag |= token in map(str.lower, extra_stopwords)
-    if(token in map(str.lower, extra_stopwords)):
-        print(token)
     return irrelevant_flag
 
 def is_similar(p_title, c_title, min_matches=1, min_sim=0.7, extra_stopwords=[]):
@@ -44,8 +44,8 @@ def is_similar(p_title, c_title, min_matches=1, min_sim=0.7, extra_stopwords=[])
     """
     # Lemmatization and stemming do not sound reasonable for mostly technical terms
     # Thus removing stopwords and punctuation should be sufficient preprocessing
-    p_tokens = [t for t in word_tokenize(p_title.lower()) if not is_irrelevant(t, extra_stopwords)]
-    c_tokens = [t for t in word_tokenize(c_title.lower()) if not is_irrelevant(t, extra_stopwords)]
+    p_tokens = [t for t in word_tokenize(p_title) if not is_irrelevant(t.lower(), extra_stopwords)]
+    c_tokens = [t for t in word_tokenize(c_title) if not is_irrelevant(t.lower(), extra_stopwords)]
 
     matching_tokens = []
     for pt in p_tokens:
@@ -58,6 +58,6 @@ def is_similar(p_title, c_title, min_matches=1, min_sim=0.7, extra_stopwords=[])
     #print(p_tokens)
     #print(c_tokens)
     #print(f"Similar_tokens: {matching_tokens}")
-    return len(matching_tokens) >= 1
+    return matching_tokens, len(matching_tokens) >= 1
 
 
