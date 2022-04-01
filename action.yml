@@ -22,6 +22,14 @@ inputs:
     description: Add extra stopwords, that are not regarded when comparing the proposal titles
     required: true
     default: "['testing', 'automated', 'pipeline', 'deployment']"
+  sort_option:
+    description: Specify sorting type for contributions
+    required: true
+    default: 'sort_by_keywords'
+    type: choice
+    options:
+    - no_sorting
+    - sort_by_keywords
 runs:
   using: "composite"
   steps:
@@ -35,7 +43,8 @@ runs:
         INPUT_FILTER_YEAR: ${{ inputs.filter_year }}
         INPUT_MIN_WORD_SIMILARITY: ${{ inputs.min_word_similarity }}
         INPUT_EXTRA_STOPWORDS: ${{ inputs.extra_stopwords }}
-
+        INPUT_SORT_OPTION: ${{ inputs.sort_option }}
+      
     # Set env according to https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#multiline-strings
     - name: Read generated comment into env
       run: |

@@ -29,6 +29,7 @@ allowed_years = [t.strip("\'") for t in allowed_years]
 extra_stopwords = os.getenv("INPUT_EXTRA_STOPWORDS").strip("[] \n").split(", ")
 extra_stopwords = [t.strip("\'") for t in extra_stopwords]
 min_sim = float(os.getenv("INPUT_MIN_WORD_SIMILARITY"))
+sort_option = os.getenv("INPUT_SORT_OPTION")
 
 #Print some debug info
 print(f"GITHUB_WORKSPACE = {os.getenv('GITHUB_WORKSPACE')}")
@@ -40,6 +41,7 @@ print(f"allowed types: {allowed_types}")
 print(f"allowed_years: {allowed_years}")
 print(f"min_sim: {min_sim}")
 print(f"proposal_title: {proposal_title}")
+print(f"sort_option: {sort_option}")
 
 #######################
 # CANDIDATE SEARCHING #
@@ -83,25 +85,54 @@ outstanding_conts_final = filter_candidates(proposal_title, outstanding_contribu
 all_conts_final = filter_candidates(proposal_title, all_contributions, min_sim, extra_stopwords)
 
 #######################
-#    WRITE CONMMENT   #
+#  GENERATE CONMMENT  #
 #######################
 
+if(sort_option == "sort_by_keywords"):
+    output = """## Reading Recommendations
+    There are many good contributions from the last years that can help as inspiration of how to create a high quality contribution yourself. Based on your proposal title, I have found the following outstanding previous student works that could be interesting to you:
 
+    """
+    for c in outstanding_conts_final:
+        output += f"- [{c['title']}]({c['url']})\n"
+
+    output += "\n## Similar topics found by comparing to all previous contributions:\n\n"
+
+    token_set = set([])
+    for c in all_conts_final:
+        for token in c['matching_token']:
+            token_set.add(token)
+    token_list = list(token_set)
+
+    for token in token_list:
+        output += f"#### {token}:\n"
+        for c in all_conts_final:
+            if token in c['matching_token']:
+                url = f"https://github.com/{repo_owner}/tree/{branch}/{c['relative_url']}"
+                output += f"- [{c['title']}]({url})\n" 
+
+elif(sort_option == "no_sorting"):
+    pass
+else:
+    output = """## Reading Recommendations
+    There are many good contributions from the last years that can help as inspiration of how to create a high quality contribution yourself. Based on your proposal title, I have found the following outstanding previous student works that could be interesting to you:
+
+    """
+    for c in outstanding_conts_final:
+        output += f"- [{c['title']}]({c['url']})\n"
+
+    output += "\n## Similar topics found by comparing to all previous contributions:\n\n"
+
+    for c in all_conts_final:
+        
+        url = f"https://github.com/{repo_owner}/tree/{branch}/{c['relative_url']}"
+        output += f"- [{c['title']}]({url})\n"
+
+#######################
+#    WRITE CONMMENT   #
+#######################
 # Write similar contributions to file that can be read from the github workflow
 # and then turned into a PR comment
-output = """## Reading Recommendations
-There are many good contributions from the last years that can help as inspiration of how to create a high quality contribution yourself. Based on your proposal title, I have found the following outstanding previous student works that could be interesting to you:
-
-"""
-for c in outstanding_conts_final:
-    output += f"- [{c['title']}]({c['url']})\n"
-
-output += "\n## Similar topics found by comparing to all previous contributions:\n\n"
-
-for c in all_conts_final:
-    
-    url = f"https://github.com/{repo_owner}/tree/{branch}/{c['relative_url']}"
-    output += f"- [{c['title']}]({url})\n"
 
 path_output = os.path.join(path_repo, "generated_comment.md")
 with open(path_output, "w", encoding="utf8") as f:
