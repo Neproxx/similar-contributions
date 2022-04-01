@@ -13,13 +13,10 @@ proposal_title = re.sub("\s\s+", " ", proposal_title)
 proposal_title = proposal_title.strip()
 # Path for workflow
 path_repo = os.getenv("GITHUB_WORKSPACE")
-#path_repo = 'C:\\Users\\marce\\Documents\\work\\KTH\Devops\\similar-contributions'
 repo_owner = os.getenv("GITHUB_REPOSITORY")
-#repo_owner = "KTH/devops-course"
 branch = os.getenv("GITHUB_BASE_REF")
-#branch = "main"
-cont_folder = os.getenv("INPUT_SEARCH_DIR")
-#cont_folder = "attic"
+cont_folder = os.getenv("INPUT_CONT_DIR")
+attic_folder = os.getenv("INPUT_ATTIC_DIR")
 allowed_types = os.getenv("INPUT_FILTER_TYPE").strip("[] \n").split(", ")
 allowed_types = [t.strip("\'") for t in allowed_types]
 #allowed_types = ["essay", "course-automation", "demo", "presentation", "executable-tutorial", "tutorial", "open-source", "open"]
@@ -30,6 +27,10 @@ extra_stopwords = os.getenv("INPUT_EXTRA_STOPWORDS").strip("[] \n").split(", ")
 extra_stopwords = [t.strip("\'") for t in extra_stopwords]
 min_sim = float(os.getenv("INPUT_MIN_WORD_SIMILARITY"))
 sort_option = os.getenv("INPUT_SORT_OPTION")
+header_filter_until2021 = os.getenv("INPUT_HEADER_FILTER").strip("[] \n").split(", ")
+header_filter_until2021 = [t.strip("\'") for t in header_filter_until2021]
+substr_strip_until2021 = os.getenv("INPUT_SUBSTR_FILTER").strip("[] \n").split(", ")
+substr_strip_until2021 = [t.strip("\'") for t in substr_strip_until2021]
 
 #Print some debug info
 print(f"GITHUB_WORKSPACE = {os.getenv('GITHUB_WORKSPACE')}")
@@ -47,15 +48,17 @@ print(f"sort_option: {sort_option}")
 # CANDIDATE SEARCHING #
 #######################
 
-path_contributions = os.path.join(path_repo, cont_folder)
+path_contributions = os.path.join(path_repo, attic_folder)
 # Get candidate from outstanding contributions
 outstanding_contributions = get_outstanding_contributions(path_contributions, allowed_types, allowed_years)
 # Get candidate from all contributions
-all_contributions = get_all_contributions(cont_folder, allowed_types, allowed_years)
+all_contributions = get_all_contributions(attic_folder, allowed_types, allowed_years, substr_strip_until2021, header_filter_until2021)
 # Also regard contributions of current course round as candidates
-all_contributions += get_all_contributions("contributions", allowed_types, ["contributions"])
+all_contributions += get_all_contributions(cont_folder, allowed_types, [cont_folder], substr_strip_until2021, header_filter_until2021)
 
-# Remove duplicates
+#######################
+# REMOVE DUPLICATES #
+#######################
 out_seen = set()
 all_seen = set()
 out_contributions_unique = []
@@ -126,6 +129,3 @@ path_output = os.path.join(path_repo, "generated_comment.md")
 with open(path_output, "w", encoding="utf8") as f:
     f.write(output)
 print(f"Output generated at: {path_output}")
-
-# TODO: Format output in a way that shows which recommendations relate to which part of the title?
-# TODO: Make sure to not include duplicates

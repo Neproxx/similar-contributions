@@ -144,7 +144,7 @@ class Stats:
         self.filtered_contributions = 0
 
 ### Code for extracting candidates from the set of all contributions of a year
-def get_all_contributions(path_contributions, allowed_types, allowed_years):
+def get_all_contributions(path_contributions, allowed_types, allowed_years, substr_filter_until2021, header_filter_until2021):
     """
     Extracts candidates from folders containing all contributions of the respective year.
     This method assumes that there is a subfolder for every year, which has another subfolder
@@ -166,7 +166,7 @@ def get_all_contributions(path_contributions, allowed_types, allowed_years):
             & (ctype != []) # Filter only allowed proposal types
             & (cyear != []) # Filter only allowed years
         ) :
-            ctitle = extract_title_from_readme(path, cyear, stats)
+            ctitle = extract_title_from_readme(path, cyear, stats, substr_filter_until2021, header_filter_until2021)
             #print(f"\t {ctitle}")
             if os.name == "nt":
                 rel_path = path_contributions + "\\" + path.lstrip(os.getcwd())
@@ -188,22 +188,10 @@ def get_all_contributions(path_contributions, allowed_types, allowed_years):
     return candidates_all
 
 
-def extract_title_from_readme(path, year, stats):
+def extract_title_from_readme(path, year, stats, substr_filter_until2021, header_filter_until2021):
     """
     Recording Mode part inspired by https://sopython.com/canon/92/extract-text-from-a-file-between-two-markers/
     """
-    title_filter_until2021 = ["Agenda for Student", "Remarkable presentations from", "Members:", "Member:", "This project is a part of", 
-        "Adam Hasselberg and Aigars Tumanis", "Author:", "Selected 2021", "Please see the grading criteria for live demo", "<img src =",
-        "Paul Löwenström: paulher@kth.se", "This folder contains students", "anders sjöbom asjobom@kth.se"]
-    title_strip_until2021 = ["Topic:", "##  ", "****topic**** : #",
-        "presentation proposal:", "presentation submission:", "presentation -", "presentation:", 
-        "Open-source contribution proposal:", "opensource contribution:", "open source contribution:", "open-source:", "opentask: ", 
-        "executable-tutorial:", "Executable Tutorial:", "executible Tutorial:", "exectuable tutorial:", "Executable Tutorial Submission:", 
-        "tutorial proposal -", "Tutorial Submission:", "Tutorial submission:", "Tutorial Proposal:", "Complete Tutorial:", "Tutorial:",
-        "essay proposal :", "essay proposal -", "Essay proposal:", "Essay:", 
-        "Video demo submission:", "Demo Submission After feedback:", "Demo proposal:", "Video demo:", "Demo submission:", "DEMO 🎥 :", "demo -", "Demo:", "demo of ", 
-        "course automation proposal:", "Course automation:", "Course-automation:", 
-        "Proposal "]
     title = ""
     if os.name == "nt":
         path_readme = path + "\\README.md"
@@ -215,7 +203,7 @@ def extract_title_from_readme(path, year, stats):
         with open(path_readme, "r", encoding="utf8", errors="ignore") as fp:
             header = ""
             first_line = fp.readline()
-            if(not any(str in first_line for str in title_filter_until2021)):
+            if(not any(str in first_line for str in header_filter_until2021)):
                 header = first_line.strip(" \n#")
             else:
                 stats.filtered_contributions += 1
@@ -243,7 +231,7 @@ def extract_title_from_readme(path, year, stats):
             stats.ill_formatted += 1
         title_before = title
         #strip titles from unnecessary info
-        for str in title_strip_until2021:
+        for str in substr_filter_until2021:
             title = re.sub('(?i)'+re.escape(str), lambda m: "", title)
         if title_before != title:
             stats.removed_substrings += 1
