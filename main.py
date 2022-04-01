@@ -1,10 +1,16 @@
 import os
-import json
+import re
 from candidate_selection import get_outstanding_contributions, get_all_contributions
 from similarity import filter_candidates
 
-proposal_title = 'React CI testing' # TODO: Get from environment
-
+# Get proposal title
+proposal_title = os.getenv("PROPOSAL_TITLE")
+#Replace newline chars with spaces
+proposal_title = proposal_title.replace("\n", ' ')
+#Remove double spaces
+proposal_title = re.sub("\s\s+", " ", proposal_title)
+#Remove all leading and trailing spaces
+proposal_title = proposal_title.strip()
 # Path for workflow
 path_repo = os.getenv("GITHUB_WORKSPACE")
 repo_owner = os.getenv("GITHUB_REPOSITORY")
@@ -29,6 +35,7 @@ print(f"INPUT_FILTER = {os.getenv('INPUT_FILTER')}")
 print(f"allowed types: {allowed_types}")
 print(f"allowed_years: {allowed_years}")
 print(f"min_sim: {min_sim}")
+print(f"proposal_title: {proposal_title}")
 
 
 path_contributions = os.path.join(path_repo, cont_folder)
