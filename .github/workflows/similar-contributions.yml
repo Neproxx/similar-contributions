@@ -32,7 +32,7 @@ jobs:
         uses: ./
         
       - name: Print output
-        run: echo ${{ env.GENERATED_COMMENT }}
+        run: echo "${{ env.GENERATED_COMMENT }}"
 
       # Create comment under current pull request
       - name: Find Comment
