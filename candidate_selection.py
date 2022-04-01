@@ -70,7 +70,7 @@ def get_candidates_from(path_readme, allowed_types):
                     rec_type = cur_type
                     rec_line += " " + line.strip()
                     rec_depth += 1
-                    if is_full_pattern(rec_line):
+                    if is_full_pattern(rec_line) and rec_type in allowed_types:
                         candidates = update_candidates(rec_line, rec_type, candidates)
                     if is_full_pattern(rec_line) or rec_depth >= 3:
                         on_record = False
