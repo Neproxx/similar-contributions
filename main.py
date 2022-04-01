@@ -89,7 +89,7 @@ if(sort_option == "sort_by_keywords"):
     token_list = list(token_set)
 
     for token in token_list:
-        output += f"# {token}:\n"
+        output += f"#### {token}:\n"
         for c in all_conts_final:
             if token in c['matching_token']:
                 url = f"https://github.com/{repo_owner}/tree/{branch}/{c['relative_url']}"
