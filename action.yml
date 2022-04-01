@@ -25,7 +25,7 @@ inputs:
   words_ignore:
     description: Add words to ignore when comparing the proposal titles
     required: true
-    default: "['testing', 'automated', 'pipeline', 'deployment', 'using', 'system', 'introduction', 'analysis', 'build', 'tools', 'tool', 'practice', 'end-to-end', 'useful', 'comparison', 'problem', 'devOps', 'setting', 'service', 'integrate', 'app', 'project', 'github', 'continuous', 'integration', 'running', 'project', 'automatic', 'application', 'environment', 'implementing', 'configuration', 'based']"
+    default: "['testing', 'automated', 'pipeline', 'deployment', 'using', 'system', 'introduction', 'analysis', 'build', 'tools', 'tool', 'practice', 'end-to-end', 'useful', 'comparison', 'problem', 'devops', 'setting', 'service', 'integrate', 'app', 'project', 'github', 'continuous', 'integration', 'running', 'project', 'automatic', 'application', 'environment', 'implementing', 'configuration', 'based']"
   header_filter_before2021:
     description: The formatting of the contributions until 2021 was not streamlined. This list contains filters that are not considered as titles
     required: true
