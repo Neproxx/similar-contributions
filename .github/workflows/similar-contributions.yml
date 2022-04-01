@@ -20,7 +20,7 @@ jobs:
       - name: Get proposal title from PR body
         run: |
             echo 'PROPOSAL_TITLE<<EOF' >> $GITHUB_ENV
-            echo "${{ github.event.pull_request.body }}" | sed -n '/^## Title/,${p;/^## Names/q}' | sed '1d;$d' | sed '/^$/d' | sed ':a;N;$!ba;s/\n/\t/g' >> $GITHUB_ENV
+            echo "${{ github.event.pull_request.body }}" | sed -n '/^## Title/,${p;/^## Names/q}' | sed '1d;$d' | sed '/^$/d' | sed ':a;N;$!ba;s/\n/\t/g' | sed '/^ *$/d' >> $GITHUB_ENV
             echo 'EOF' >> $GITHUB_ENV
       - name: echo proposal title
         run: |
