@@ -47,14 +47,30 @@ print(f"proposal_title: {proposal_title}")
 
 path_contributions = os.path.join(path_repo, cont_folder)
 # Get candidate from outstanding contributions
-outstanding_contributions = get_outstanding_contributions(path_contributions)
+outstanding_contributions = get_outstanding_contributions(path_contributions, allowed_types, allowed_years)
 # Get candidate from all contributions
 all_contributions = get_all_contributions(cont_folder, allowed_types, allowed_years)
 # Also regard contributions of current course round as candidates
 all_contributions += get_all_contributions("contributions", allowed_types, ["contributions"])
 
-print("Candidate contributions:")
+# Remove duplicates
+out_seen = set()
+all_seen = set()
+out_contributions_unique = []
+all_contributions_unique = []
+for c in outstanding_contributions:
+    if not c["title"] in out_seen:
+        out_seen.add(c["title"])
+        out_contributions_unique.append(c)
 for c in all_contributions:
+    if not c["title"] in all_seen:
+        all_seen.add(c["title"])
+        all_contributions_unique.append(c)
+outstanding_contributions = out_contributions_unique
+all_contributions = all_contributions_unique
+
+print("Outstanding candidate contributions:")
+for c in outstanding_contributions:
     print(c)
 print("\n")
 

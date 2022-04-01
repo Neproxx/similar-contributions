@@ -23,33 +23,88 @@ def get_section_label(line):
     else:
         return "irrelevant-section"
 
+def get_type_label(line, allowed_types, default):
+    """
+    Given a line from a README.md file, determines whether this line indicates
+    a sub-header like "essays" by testing whether one of the allowed assignment types
+    is a substring. Returns the substring if that is the case and an empty string if
+    the line represents a not allowed assignment type.
+    """
+    contribution_pattern = "^\s*?\*.\s*?\[(.*)\]\((.*)\)\s*?$"
+    type_pattern = "^\s*?\*?\s*?([a-zA-Z ]+)\s*?$"
+    is_contribution = bool(re.match(contribution_pattern, line.strip()))
+    match = re.match(type_pattern, line.replace(":", "").strip())
+    if not is_contribution and match:
+        match_str = match.group(1)
+        for t in allowed_types:
+            if t.lower() in match_str.lower():
+                return t
+        return ""
+    return default
 
-def get_candidates_from(path_readme):
+def get_candidates_from(path_readme, allowed_types):
     """
     Extracts all the candidate contributions from a given README.md file
     that bundles all the selected contributions from a specific year
     """
+    # Sort the allowed types so that more explicit, large names are
+    # prioritized over short ones in get_type_label()
+    allowed_types = sorted(allowed_types.copy(), key=len, reverse=True)
     candidates = []
+    cur_section = ""
+    cur_type = ""
+    on_record = False
+    rec_line = ""
+    rec_depth = 0
     with open(path_readme, "r", encoding="utf8") as f:
         for line in f.readlines():
             if is_heading(line):
                 cur_section = get_section_label(line.lower())
             if cur_section == "student-contributions":
-                candidates = update_candidates(line, candidates)
+                cur_type = get_type_label(line, allowed_types, default=cur_type)
+                if cur_type in allowed_types:
+                    candidates = update_candidates(line, cur_type, candidates)
+                if is_partial_pattern(line.strip()) or on_record:
+                    on_record = True
+                    rec_line += " " + line.strip()
+                    rec_depth += 1
+                    if is_full_pattern(rec_line):
+                        candidates = update_candidates(rec_line, cur_type, candidates)
+                    if is_full_pattern(rec_line) or rec_depth >= 3:
+                        on_record = False
+                        rec_line = ""
+                        rec_depth = 0
     return candidates
 
+def is_partial_pattern(line):
+    """
+    Checks if line starts out like a contribution bullet point but ends early.
+    This indicates that the contribution contains line breaks.
+    """
+    partial_pattern = "^\s*?\*.\s*?\[\s*?[a-zA-Z ]"
+    full_pattern = "^\s*?\*.\s*?\[(.*)\]\((.*)\)\s*?$"
+    if re.match(partial_pattern, line.strip()) and not re.match(full_pattern, line.strip()):
+        return True
+
+
+def is_full_pattern(line):
+    full_pattern = "^\s*?\*.\s*?\[(.*)\]\((.*)\)\s*?$"
+    if re.match(full_pattern, line.strip()):
+        return True
+
     
-def update_candidates(line, candidates, url_label="url"):
+def update_candidates(line, cur_type, candidates, url_label="url"):
     """
     Checks whether the line represents a contribution
     and adds it to the list of candidates.
     """
-    pattern = ".*\*.*\[(.*)\]\((.*)\)"
+    pattern = "^\s*?\*.\s*?\[(.*)\]\((.*)\)\s*?$"
     m = re.match(pattern, line.strip())
     if m:
         candidates.append({
             "title": m.group(1),
-            url_label: m.group(2)
+            url_label: m.group(2),
+            "type": cur_type
         })
     return candidates
 
@@ -65,19 +120,19 @@ def find_readme(path_year):
                 return os.path.join(path_year, file)
     return ""
 
-def get_outstanding_contributions(path_contributions):
+def get_outstanding_contributions(path_contributions, allowed_types, allowed_years):
     """
     Extracts candidate contributions from a year's readme file listing the outstanding ones.
     This method assumes that the given folder contains subfolders with
     README files from which the contributions should be extracted.
     """
     candidates_all = []
-    for folder in os.listdir(path_contributions):
-        path_year =  os.path.join(path_contributions, folder)
-        if os.path.isdir(path_year):
+    for folder_year in os.listdir(path_contributions):
+        path_year =  os.path.join(path_contributions, folder_year)
+        if os.path.isdir(path_year) and folder_year in allowed_years:
             path_readme = find_readme(path_year)
             if path_readme:
-                candidates_all += get_candidates_from(path_readme)
+                candidates_all += get_candidates_from(path_readme, allowed_types)
     return candidates_all
 
 class Stats:
