@@ -274,6 +274,6 @@ def extract_title_from_readme(path, year, stats, substr_filter_until2021, header
 def get_unique_type_label(t):
     if "executable-tutorial" in t and "tutorial" in t:
         return "tutorial"
-    if "open-source" in t and "open" in t:
+    if "open" in t:
         return "open-source"
     return t[0]
