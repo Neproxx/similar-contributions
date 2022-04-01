@@ -30,9 +30,10 @@ jobs:
       # Will have to be replaced by action name once it is published
       - name: Run action
         uses: ./
-        
-      - name: Print output
-        run: echo "${{ env.GENERATED_COMMENT }}"
+      
+      # Leads to error when keyword "automatic" is in proposal title
+      #- name: Print output
+      #  run: echo "${{ env.GENERATED_COMMENT }}"
 
       # Create comment under current pull request
       - name: Find Comment
