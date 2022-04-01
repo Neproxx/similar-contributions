@@ -88,11 +88,9 @@ all_conts_final = filter_candidates(proposal_title, all_contributions, min_sim, 
 #  GENERATE CONMMENT  #
 #######################
 output = """## Reading Recommendations
-There are many good contributions from the last years that can help as inspiration of how to create a high quality contribution yourself. Based on your proposal title, I have found the following outstanding previous student works that could be interesting to you:
-
-"""
+Based on your proposal title, we have found the following contributions from previous years highlighted as "outstanding" works. Hopefully, they can serve as inspiration.\n"""
 for c in outstanding_conts_final:
-    output += f"- [{c['title']}]({c['url']})\n"
+    output += f"- [{c['title']}]({c['url']}) \[{c['type']}\]\n"
 
 output += "\n## Similar topics found by comparing to all previous contributions:\n\n"
 
@@ -108,7 +106,7 @@ if(sort_option == "sort_by_keywords"):
         for c in all_conts_final:
             if token in c['matching_token']:
                 url = f"https://github.com/{repo_owner}/tree/{branch}/{c['relative_url']}"
-                output += f"- [{c['title']}]({url})\n" 
+                output += f"- [{c['title']}]({url})  \[{c['type']}\]\n" 
 
 elif(sort_option == "no_sorting"):
     pass
@@ -116,7 +114,7 @@ else:
     for c in all_conts_final:
         
         url = f"https://github.com/{repo_owner}/tree/{branch}/{c['relative_url']}"
-        output += f"- [{c['title']}]({url})\n"
+        output += f"- [{c['title']}]({url})  \[{c['type']}\]\n"
 
 #######################
 #    WRITE CONMMENT   #
