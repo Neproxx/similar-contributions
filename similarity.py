@@ -1,4 +1,3 @@
-import os
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
@@ -31,6 +30,7 @@ def is_irrelevant(token, words_ignore, stemmer):
     irrelevant_flag |= stemmer.stem(token) in [stemmer.stem(s.lower()) for s in words_ignore]
     return irrelevant_flag
 
+
 def is_similar(p_title, c_title, stemmer, min_sim=0.7, words_ignore=[], min_matches=1):
     """
     Checks whether the proposal title has at least min_matches words that
@@ -43,8 +43,6 @@ def is_similar(p_title, c_title, stemmer, min_sim=0.7, words_ignore=[], min_matc
     :param min_sim: Number in the range [0,1] representing the threshold above which
                     two words are regarded as similar.
     """
-    # Lemmatization and stemming do not sound reasonable for mostly technical terms
-    # Thus removing stopwords and punctuation should be sufficient preprocessing
     p_tokens = [t for t in word_tokenize(p_title) if not is_irrelevant(t.lower(), words_ignore, stemmer)]
     c_tokens = [t for t in word_tokenize(c_title) if not is_irrelevant(t.lower(), words_ignore, stemmer)]
 
@@ -54,11 +52,4 @@ def is_similar(p_title, c_title, stemmer, min_sim=0.7, words_ignore=[], min_matc
             if SequenceMatcher(None, pt, ct).ratio() >= min_sim:
                 matching_tokens.append(pt)
                 continue
-
-    #print("Compare:")
-    #print(p_tokens)
-    #print(c_tokens)
-    #print(f"Similar_tokens: {matching_tokens}")
     return matching_tokens, len(matching_tokens) >= min_matches
-
-

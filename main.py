@@ -5,12 +5,11 @@ from similarity import filter_candidates
 
 # Get proposal title
 proposal_title = os.getenv("PROPOSAL_TITLE")
-#Replace newline chars with spaces
 proposal_title = proposal_title.replace("\n", ' ')
 #Remove double spaces
 proposal_title = re.sub("\s\s+", " ", proposal_title)
-#Remove all leading and trailing spaces
 proposal_title = proposal_title.strip()
+
 # Path for workflow
 path_repo = os.getenv("GITHUB_WORKSPACE")
 repo_owner = os.getenv("GITHUB_REPOSITORY")
@@ -19,10 +18,8 @@ cont_folder = os.getenv("INPUT_CONT_DIR")
 attic_folder = os.getenv("INPUT_ATTIC_DIR")
 allowed_types = os.getenv("INPUT_FILTER_TYPE").strip("[] \n").split(", ")
 allowed_types = [t.strip("\'") for t in allowed_types]
-#allowed_types = ["essay", "course-automation", "demo", "presentation", "executable-tutorial", "tutorial", "open-source", "open"]
 allowed_years = os.getenv("INPUT_FILTER_YEAR").strip("[] \n").split(", ")
 allowed_years = [t.strip("\'") for t in allowed_years]
-#allowed_types = ["2019", "2020", "2021"]
 words_ignore = os.getenv("INPUT_WORDS_IGNORE").strip("[] \n").split(", ")
 words_ignore = [t.strip("\'") for t in words_ignore]
 min_sim = float(os.getenv("INPUT_MIN_WORD_SIMILARITY"))

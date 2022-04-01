@@ -3,6 +3,7 @@ import re
 from warnings import warn
 from similarity import non_informant_words, punctuation
 
+
 ### Code for extracting candidates from "selected student works" README files
 def is_heading(line):
     """
@@ -23,6 +24,7 @@ def get_section_label(line):
     else:
         return "irrelevant-section"
 
+
 def get_type_label(line, allowed_types, default):
     """
     Given a line from a README.md file, determines whether this line indicates
@@ -41,6 +43,7 @@ def get_type_label(line, allowed_types, default):
                 return t
         return ""
     return default
+
 
 def get_candidates_from(path_readme, allowed_types):
     """
@@ -79,6 +82,7 @@ def get_candidates_from(path_readme, allowed_types):
                         rec_depth = 0
     return candidates
 
+
 def is_partial_pattern(line):
     """
     Checks if line starts out like a contribution bullet point but ends early.
@@ -111,6 +115,7 @@ def update_candidates(line, cur_type, candidates, url_label="url"):
         })
     return candidates
 
+
 def find_readme(path_year):
     """
     Returns the path to the README file in the path_year folder
@@ -122,6 +127,7 @@ def find_readme(path_year):
             if "readme" in file.lower():
                 return os.path.join(path_year, file)
     return ""
+
 
 def get_outstanding_contributions(path_contributions, allowed_types, allowed_years):
     """
@@ -146,17 +152,11 @@ class Stats:
         self.removed_substrings = 0
         self.filtered_contributions = 0
 
+
 ### Code for extracting candidates from the set of all contributions of a year
 def get_all_contributions(path_contributions, allowed_types, allowed_years, substr_filter_until2021, header_filter_until2021):
     """
     Extracts candidates from folders containing all contributions of the respective year.
-    This method assumes that there is a subfolder for every year, which has another subfolder
-    the name of which contains "contributions" which has a subfolder for every assignment type 
-    which again have subfolders for every assignment which contain the README.md from which the
-    information about the contribution can be extracted. In short, we assume a structure:
-    path_contributions/<yyyy>/<contributions-yyyy>/<assignment-type>/<team-name>/README.md
-    For presentations, we assume that there is a subfolder for every week that contains a
-    readme with titles and urls for all presentations of that week.
     """
     stats = Stats()
     candidates_all = []
@@ -170,12 +170,7 @@ def get_all_contributions(path_contributions, allowed_types, allowed_years, subs
             & (cyear != []) # Filter only allowed years
         ) :
             ctitle = extract_title_from_readme(path, cyear, stats, substr_filter_until2021, header_filter_until2021)
-            #print(f"\t {ctitle}")
-            if os.name == "nt":
-                rel_path = path_contributions + "\\" + path.lstrip(os.getcwd())
-            else:
-                rel_path = path_contributions + "/" + path.lstrip(os.getcwd())
-            #print(rel_path)
+            rel_path = os.path.join(path_contributions, path.lstrip(os.getcwd()))
             if (ctitle != ""): # Add candidate only if title could be added
                 candidates_all += [{
                                 "title": ctitle,
@@ -196,11 +191,7 @@ def extract_title_from_readme(path, year, stats, substr_filter_until2021, header
     Recording Mode part inspired by https://sopython.com/canon/92/extract-text-from-a-file-between-two-markers/
     """
     title = ""
-    if os.name == "nt":
-        path_readme = path + "\\README.md"
-    else:
-        path_readme = path + "/README.md"
-    #print(f"Extracting from: {path_readme}")
+    path_readme = os.path.join(path, "README.md")
     if(year[0] in ['2019', '2020', '2021']):
         # parse first header
         with open(path_readme, "r", encoding="utf8", errors="ignore") as fp:
@@ -260,16 +251,15 @@ def extract_title_from_readme(path, year, stats, substr_filter_until2021, header
     #Remove markdown chars used for highlighting
     for ch in ['*', '_']:
         title = title.replace(ch, '')
-    #Replace newline chars with spaces
     title = title.replace("\n", ' ')
     #Remove double spaces
     title = re.sub("\s\s+", " ", title)
-    #Remove all leading and trailing spaces
     title = title.strip()
     #Capitalize first letter
     if title != "":
         title = title[0].upper() + title[1:]
     return title
+
 
 def get_unique_type_label(t):
     if "executable-tutorial" in t and "tutorial" in t:
