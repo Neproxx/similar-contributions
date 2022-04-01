@@ -1,7 +1,7 @@
 # similar-contributions
 This action is embedded in the [KTH devops course](https://github.com/KTH/devops-course) and only makes sense to be used in that context. 
 
-Upon a pull request of a student to submit an assignment proposal, this action browses the repository for all previous and current years' contributions and creates a comment linking those with similar titles. The comment is split in two sections, the first section contains similar contributions out of those that are highlighted as **outstanding** for that year. Students that feel overwhelmed at the beginning of the course or are struggling to find a good structure for their assignment are given high quality reading suggestions to help overcome these initial hurdles. The second section of the comment is created based on comparison with **all** previous contributions and helps the TA to assess whether the proposal is too similar to a previous contribution. However, due to the non-uniform structure of the different readme files in previous years, this output seems to be unreliable and thus must be activated explicitly in the workflow to be shown.
+Upon a pull request of a student to submit an assignment proposal, this action browses the repository for all previous and current years' contributions and creates a comment linking those with similar titles. The comment is split in two sections, the first section contains similar contributions out of those that are highlighted as **outstanding** for that year. Students that feel overwhelmed at the beginning of the course or are struggling to find a good structure for their assignment are given high quality reading suggestions to help overcome these initial hurdles. The second section of the comment is created based on comparison with **all** previous contributions and helps the TA to assess whether the proposal is too similar to a previous contribution.
 
 ### Minimal example
 ```
@@ -23,7 +23,7 @@ jobs:
       - name: Get proposal title from PR body
         run: |
             echo 'PROPOSAL_TITLE<<EOF' >> $GITHUB_ENV
-            echo "${{ github.event.pull_request.body }}" | sed -n '/^## Title/,${p;/^## Names/q}' | sed '1d;$d' | sed '/^$/d' >> $GITHUB_ENV
+            echo "${{ github.event.pull_request.body }}" | sed -n '/^## Title/,${p;/^## Names/q}' | sed '1d;$d' | sed '/^$/d' | sed ':a;N;$!ba;s/\n/\t/g' | sed '/^ *$/d' >> $GITHUB_ENV
             echo 'EOF' >> $GITHUB_ENV
       - name: echo proposal title
         run: |
@@ -31,11 +31,13 @@ jobs:
             
       # Create comment body and stores it in env.GENERATED_COMMENT
       - name: Run action
-        uses: ./<PLACEHOLDER>
+        if: env.PROPOSAL_TITLE != ''
+        uses: Neproxx/similar-contributions@v1
         
       # Check if there is already a recommendation comment under current pull request
       - name: Find Comment
         uses: peter-evans/find-comment@v2
+        if: env.PROPOSAL_TITLE != ''
         id: fc # this tag will be used for the conditional selection of either creating or updating
         with:
           issue-number: ${{ github.event.pull_request.number }}
@@ -44,7 +46,7 @@ jobs:
        
       # Create comment if there isn't
       - name: Create comment
-        if: steps.fc.outputs.comment-id == ''
+        if: steps.fc.outputs.comment-id == '' && env.PROPOSAL_TITLE != ''
         uses: peter-evans/create-or-update-comment@v2
         with:
           issue-number: ${{ github.event.pull_request.number }}
@@ -52,7 +54,7 @@ jobs:
 
       # Update comment if there is
       - name: Update comment
-        if: steps.fc.outputs.comment-id != ''
+        if: steps.fc.outputs.comment-id != '' && env.PROPOSAL_TITLE != ''
         uses: peter-evans/create-or-update-comment@v2
         with:
           comment-id: ${{ steps.fc.outputs.comment-id }}
@@ -78,10 +80,10 @@ jobs:
 ### Assumptions
 The action assumes that there is one folder that contains all the contributions from previous years and the name of which can be specified with the input "attic_dir" (see section **inputs** for details). In this folder, more subfolders are located that represent the previous years. The searching algorithm will consider all files named "README.md" (case sensitive) in these folders.
   
-Each of these year-folders can contain another "README.md" (case insensitive). We refer to this markdown file as "selected-readme" (because it states the selected student works). The selected-readme is used to extract possible contributions for the first section of the resulting comment, while the other files are used to extract possible contributions for the second section of the comment.
+Each of the already mentioned year-folders can contain another "README.md" (case insensitive). We refer to this markdown file as "selected-readme" (because it states the selected student works). The selected-readme is used to extract possible contributions for the first section of the resulting comment, while the other files are used to extract possible contributions for the second section of the comment.
 
 ### Similarity between titles
-We compare the title of the proposal and each previous contribution to determine whether they are similar. To this end, we remove stopwords and other non-informant words from both titles and then determine for each word in the proposal title, whether it has a counterpart in the contribution title. We compare words using the [difflib](https://docs.python.org/3/library/difflib.html) library which generates a similarity measure in the range [0,1] for two strings. Two words from the respective titles match if their similarity is above a specified threshold which can be defined with the input "min_word_similarity" (see section **inputs** for details). The authors state that a value above 0.6 represents a close match. Because some titles are extremely short while others are very long, we decided to include a contribution in the output comment if at least one word from the proposal title has a counterpart in the contribution title.
+We compare the title of the proposal and each previous contribution to determine whether they are similar. To this end, we remove stopwords and other non-informant words from both titles and then determine for each word in the proposal title whether it has a counterpart in the contribution title. We compare words using the [difflib](https://docs.python.org/3/library/difflib.html) library which generates a similarity measure in the range [0,1] for two strings. Two words from the respective titles match if their similarity is above a specified threshold which can be defined with the input "min_word_similarity" (see section **inputs** for details). The authors state that a value above 0.6 represents a close match. Because some titles are extremely short while others are very long, we decided to include a contribution in the output comment if at least one word from the proposal title has a counterpart in the contribution title.
 
 ### Limitations
-Until 2021 there was no unified way, how proposal "README.md" files had to be formatted. Thus, it is not possible to consider every contribution. However, we managed to get the number of the non-parsable contributions, down to a number of just 23 of ~400 total contributions.
+Until 2021 there was no unified way, how proposal "README.md" files had to be formatted. Thus, it is not possible to consider every contribution. However, we managed to get the number of the non-parsable contributions, down to a number of just 23 of ~400 total contributions by applying different heuristics.
