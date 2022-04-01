@@ -21,7 +21,7 @@ inputs:
   extra_stopwords:
     description: Add extra stopwords, that are not regarded when comparing the proposal titles
     required: true
-    default: "['testing', 'automated', 'pipeline', 'deployment']"
+    default: "['testing', 'automated', 'pipeline', 'deployment', 'using']"
   sort_option:
     description: Specify sorting type for contributions
     required: true
