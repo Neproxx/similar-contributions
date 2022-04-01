@@ -104,7 +104,7 @@ def update_candidates(line, cur_type, candidates, url_label="url"):
         candidates.append({
             "title": m.group(1),
             url_label: m.group(2),
-            "type": cur_type
+            "type": [cur_type]
         })
     return candidates
 
@@ -279,3 +279,10 @@ def extract_title_from_readme(path, year, stats):
     if title != "":
         title = title[0].upper() + title[1:]
     return title
+
+def get_unique_type_label(t):
+    if "executable-tutorial" in t and "tutorial" in t:
+        return "tutorial"
+    if "open-source" in t and "open" in t:
+        return "open-source"
+    return t[0]
