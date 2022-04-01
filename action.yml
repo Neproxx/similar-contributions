@@ -2,10 +2,14 @@ name: 'similar-contributions'
 description: 'Searches for similar contributions by comparing previous pull requests to the current proposal title'
 
 inputs:
-  search_dir:
+  cont_dir:
     description: Directory containing the contributions
     required: true
-    default: "attic"
+    default: "cont"
+  attic_dir:
+    description: Directory containing the contributions
+    required: true
+    default: "attic" 
   filter_type:
     description: Filter for contribution types that are should be regarded
     required: true
@@ -18,6 +22,26 @@ inputs:
     description: Treshold for similiarity check of keywords
     required: true
     default: "0.8"
+  words_ignore:
+    description: Add words to ignore when comparing the proposal titles
+    required: true
+    default: "['testing', 'automated', 'pipeline', 'deployment', 'using', 'system', 'introduction', 'analysis', 'build', 'tools', 'tool', 'practice', 'end-to-end', 'useful', 'comparison', 'problem', 'devOps', 'setting', 'service', 'integrate', 'app', 'project', 'github', 'continuous', 'integration', 'running', 'project', 'automatic', 'application', 'environment', 'implementing', 'configuration', 'based']"
+  header_filter_before2021:
+    description: The formatting of the contributions until 2021 was not streamlined. This list contains filters that are not considered as titles
+    required: true
+    default: "['Agenda for Student', 'Remarkable presentations from', 'Members:', 'Member:', 'This project is a part of', 'Adam Hasselberg and Aigars Tumanis', 'Author:', 'Selected 2021', 'Please see the grading criteria for live demo', '<img src =', 'Paul Löwenström: paulher@kth.se', 'This folder contains students', 'anders sjöbom asjobom@kth.se']"
+  substr_filter_before2021:
+    description: The formatting of the contributions until 2021 was not streamlined. This list contains substrings that should be removed from titles
+    required: true
+    default: "['Topic:', '##  ', '****topic**** : #', 'presentation proposal:', 'presentation submission:', 'presentation -', 'presentation:', 'Open-source contribution proposal:', 'opensource contribution:', 'open source contribution:', 'open-source:', 'opentask: ', 'executable-tutorial:', 'Executable Tutorial:', 'executible Tutorial:', 'exectuable tutorial:', 'Executable Tutorial Submission:', 'tutorial proposal -', 'Tutorial Submission:', 'Tutorial submission:', 'Tutorial Proposal:', 'Complete Tutorial:', 'Tutorial:', 'essay proposal :', 'essay proposal -', 'Essay proposal:', 'Essay:', 'Video demo submission:', 'Demo Submission After feedback:', 'Demo proposal:', 'Video demo:', 'Demo submission:', 'DEMO 🎥 :', 'demo -', 'Demo:', 'demo of ',  'course automation proposal:', 'Course automation:' 'Course-automation:', 'Proposal ']"
+  sort_option:
+    description: Specify sorting type for contributions
+    required: true
+    default: 'sort_by_keywords'
+    type: choice
+    options:
+    - no_sorting
+    - sort_by_keywords
 runs:
   using: "composite"
   steps:
@@ -26,11 +50,16 @@ runs:
     - run: python ./main.py
       shell: bash
       env:
-        INPUT_SEARCH_DIR: ${{ inputs.search_dir }}
+        INPUT_CONT_DIR: ${{ inputs.cont_dir }}
+        INPUT_ATTIC_DIR: ${{ inputs.attic_dir }}
         INPUT_FILTER_TYPE: ${{ inputs.filter_type }}
         INPUT_FILTER_YEAR: ${{ inputs.filter_year }}
         INPUT_MIN_WORD_SIMILARITY: ${{ inputs.min_word_similarity }}
-
+        INPUT_WORDS_IGNORE: ${{ inputs.words_ignore }}
+        INPUT_SORT_OPTION: ${{ inputs.sort_option }}
+        INPUT_HEADER_FILTER: ${{ inputs.header_filter_before2021 }}
+        INPUT_SUBSTR_FILTER: ${{ inputs.substr_filter_before2021 }}
+      
     # Set env according to https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#multiline-strings
     - name: Read generated comment into env
       run: |

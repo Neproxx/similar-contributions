@@ -23,33 +23,91 @@ def get_section_label(line):
     else:
         return "irrelevant-section"
 
+def get_type_label(line, allowed_types, default):
+    """
+    Given a line from a README.md file, determines whether this line indicates
+    a sub-header like "essays" by testing whether one of the allowed assignment types
+    is a substring. Returns the substring if that is the case and an empty string if
+    the line represents a not allowed assignment type.
+    """
+    contribution_pattern = "^\s*?\*.\s*?\[(.*)\]\((.*)\)\s*?$"
+    type_pattern = "^\s*?\*?\s*?([a-zA-Z ]+)\s*?$"
+    is_contribution = bool(re.match(contribution_pattern, line.strip()))
+    match = re.match(type_pattern, line.replace(":", "").strip())
+    if not is_contribution and match:
+        match_str = match.group(1)
+        for t in allowed_types:
+            if t.lower() in match_str.lower():
+                return t
+        return ""
+    return default
 
-def get_candidates_from(path_readme):
+def get_candidates_from(path_readme, allowed_types):
     """
     Extracts all the candidate contributions from a given README.md file
     that bundles all the selected contributions from a specific year
     """
+    # Sort the allowed types so that more explicit, large names are
+    # prioritized over short ones in get_type_label()
+    allowed_types = sorted(allowed_types.copy(), key=len, reverse=True)
     candidates = []
+    cur_section = ""
+    cur_type = ""
+    on_record = False
+    rec_line = ""
+    rec_depth = 0
+    rec_type = ""
     with open(path_readme, "r", encoding="utf8") as f:
         for line in f.readlines():
             if is_heading(line):
                 cur_section = get_section_label(line.lower())
             if cur_section == "student-contributions":
-                candidates = update_candidates(line, candidates)
+                cur_type = get_type_label(line, allowed_types, default=cur_type)
+                if cur_type in allowed_types:
+                    candidates = update_candidates(line, cur_type, candidates)
+                if is_partial_pattern(line.strip()) or on_record:
+                    on_record = True
+                    rec_type = cur_type
+                    rec_line += " " + line.strip()
+                    rec_depth += 1
+                    if is_full_pattern(rec_line) and rec_type in allowed_types:
+                        candidates = update_candidates(rec_line, rec_type, candidates)
+                    if is_full_pattern(rec_line) or rec_depth >= 3:
+                        on_record = False
+                        rec_type = ""
+                        rec_line = ""
+                        rec_depth = 0
     return candidates
 
+def is_partial_pattern(line):
+    """
+    Checks if line starts out like a contribution bullet point but ends early.
+    This indicates that the contribution contains line breaks.
+    """
+    partial_pattern = "^\s*?\*.\s*?\[\s*?[a-zA-Z ]"
+    full_pattern = "^\s*?\*.\s*?\[(.*)\]\((.*)\)\s*?$"
+    if re.match(partial_pattern, line.strip()) and not re.match(full_pattern, line.strip()):
+        return True
+
+
+def is_full_pattern(line):
+    full_pattern = "^\s*?\*.\s*?\[(.*)\]\((.*)\)\s*?$"
+    if re.match(full_pattern, line.strip()):
+        return True
+
     
-def update_candidates(line, candidates, url_label="url"):
+def update_candidates(line, cur_type, candidates, url_label="url"):
     """
     Checks whether the line represents a contribution
     and adds it to the list of candidates.
     """
-    pattern = ".*\*.*\[(.*)\]\((.*)\)"
+    pattern = "^\s*?\*.\s*?\[(.*)\]\((.*)\)\s*?$"
     m = re.match(pattern, line.strip())
     if m:
         candidates.append({
             "title": m.group(1),
-            url_label: m.group(2)
+            url_label: m.group(2),
+            "type": [cur_type]
         })
     return candidates
 
@@ -65,23 +123,31 @@ def find_readme(path_year):
                 return os.path.join(path_year, file)
     return ""
 
-def get_outstanding_contributions(path_contributions):
+def get_outstanding_contributions(path_contributions, allowed_types, allowed_years):
     """
     Extracts candidate contributions from a year's readme file listing the outstanding ones.
     This method assumes that the given folder contains subfolders with
     README files from which the contributions should be extracted.
     """
     candidates_all = []
-    for folder in os.listdir(path_contributions):
-        path_year =  os.path.join(path_contributions, folder)
-        if os.path.isdir(path_year):
+    for folder_year in os.listdir(path_contributions):
+        path_year =  os.path.join(path_contributions, folder_year)
+        if os.path.isdir(path_year) and folder_year in allowed_years:
             path_readme = find_readme(path_year)
             if path_readme:
-                candidates_all += get_candidates_from(path_readme)
+                candidates_all += get_candidates_from(path_readme, allowed_types)
     return candidates_all
 
+class Stats:
+    def __init__(self):        
+        self.from_topic_section = 0
+        self.from_first_line = 0
+        self.ill_formatted = 0
+        self.removed_substrings = 0
+        self.filtered_contributions = 0
+
 ### Code for extracting candidates from the set of all contributions of a year
-def get_all_contributions(path_contributions, allowed_types, allowed_years):
+def get_all_contributions(path_contributions, allowed_types, allowed_years, substr_filter_until2021, header_filter_until2021):
     """
     Extracts candidates from folders containing all contributions of the respective year.
     This method assumes that there is a subfolder for every year, which has another subfolder
@@ -94,136 +160,120 @@ def get_all_contributions(path_contributions, allowed_types, allowed_years):
     """
     stats = Stats()
     candidates_all = []
-    for year_folder in os.listdir(path_contributions):
-        if year_folder in allowed_years:
-            path_year = os.path.join(path_contributions, year_folder)
-            if os.path.isdir(path_year):
-                for cyear_folder in os.listdir(path_year):
-                    path_cyear = os.path.join(path_year, cyear_folder)
-                    if os.path.isdir(path_cyear):
-                        for type_folder in os.listdir(path_cyear):
-                            if type_folder in allowed_types:
-                                path_type = os.path.join(path_cyear, type_folder)
-                                if os.path.isdir(path_type):
-                                    # presentations are bundled in single readmes, so their extraction is different
-                                    if type_folder == "presentation":
-                                        if os.path.isdir(path_type):
-                                            for path_pres_week_folder in os.listdir(path_type):
-                                                path_pres_week = os.path.join(path_type, path_pres_week_folder)
-                                                if os.path.isdir(path_pres_week):
-                                                    for file in os.listdir(path_pres_week):
-                                                        path_readme = os.path.join(path_pres_week, file)
-                                                        if os.path.isfile(path_readme) and "readme" in file.lower():
-                                                            relative_url = "/".join([year_folder, cyear_folder, type_folder,
-                                                                                    path_pres_week, file])
-                                                            candidates_all += extract_from_presentations(path_readme, relative_url)
-                                    else:
-                                        for team_folder in os.listdir(path_type):
-                                            path_team = os.path.join(path_type, team_folder)
-                                            if os.path.isdir(path_team):
-                                                found_readme = False
-                                                for file in os.listdir(path_team):
-                                                    if "readme.md" in file.lower():
-                                                        path_readme = os.path.join(path_team, file)
-                                                        relative_url = "/".join([year_folder, cyear_folder, type_folder, team_folder, file])
-                                                        candidates_all += extract_from_regular(path_readme,
-                                                                                            assignment_type=type_folder,
-                                                                                            relative_url=relative_url,
-                                                                                            stats=stats)
-                                                        found_readme = True
-                                                if not found_readme:
-                                                    warn(f"Could not find README.md in folder {path_team}, please check this contribution!")
+
+    for path, dirs, files in os.walk(path_contributions, topdown=False):
+        ctype = [str for str in allowed_types if str in path]
+        cyear = [str for str in allowed_years if str in path]
+        if (
+            ("README.md" in files) # All candidates must have a README.md
+            & (ctype != []) # Filter only allowed proposal types
+            & (cyear != []) # Filter only allowed years
+        ) :
+            ctitle = extract_title_from_readme(path, cyear, stats, substr_filter_until2021, header_filter_until2021)
+            #print(f"\t {ctitle}")
+            if os.name == "nt":
+                rel_path = path_contributions + "\\" + path.lstrip(os.getcwd())
+            else:
+                rel_path = path_contributions + "/" + path.lstrip(os.getcwd())
+            #print(rel_path)
+            if (ctitle != ""): # Add candidate only if title could be added
+                candidates_all += [{
+                                "title": ctitle,
+                                "relative_url": rel_path,
+                                "type": ctype
+                                }]
+    #Print stats
     print(f"Contributions extracted based on title / topic header: {stats.from_topic_section}")
     print(f"Contributions extracted from first line, because of missing title indicator: {stats.from_first_line}")
     print(f"Contributions that could not be extracted: {stats.ill_formatted}")
+    print(f"Contributions titles, where substrings were stripped: {stats.removed_substrings}")
+    print(f"Contributions titles, that were filtered: {stats.filtered_contributions}")
     return candidates_all
 
-class Stats:
-    def __init__(self):        
-        self.from_topic_section = 0
-        self.from_first_line = 0
-        self.ill_formatted = 0
 
-def extract_from_presentations(path_readme, relative_url):
-    print("Extracting from readme:")
-    print(relative_url)
-    new_candidates = []
-    with open(path_readme, "r", encoding="utf8", errors="ignore") as f:
-        for line in f.readlines():
-            # Note: A contirbution is only taken into account if it is accompanied by an url
-            update_candidates(line, new_candidates, url_label="relative_url")
-    return new_candidates
-
-def extract_from_regular(path_readme, assignment_type, relative_url, stats):
+def extract_title_from_readme(path, year, stats, substr_filter_until2021, header_filter_until2021):
     """
-    Extracts the relevant information from the README.md of a contribution.
-    Although they are formatted well in more recent years, they have an
-    arbitrary formatting in earlier years. We apply some heuristic
+    Recording Mode part inspired by https://sopython.com/canon/92/extract-text-from-a-file-between-two-markers/
     """
-    # Figure out the format
-    # -> Check if any heading contains the word "topic" or "title"
-    # If there is none, assume the first header to be the title
-    with open(path_readme, "r", encoding="utf8", errors="ignore") as f:
-        is_first_line = True
-        first_header = ""
-        # Some titles are distributed over multiple lines
-        # -> parse these titles until encountering a new heading or no lines are left 
-        parsing_multiline = False
-        title = ""
-        cur_section = "irrelevant-section"
-        for line in f.readlines():
-            if is_heading(line):
-                if parsing_multiline:
-                    stats.from_topic_section += 1
-                    return [{
-                                "title": title,
-                                "relative_url": relative_url,
-                                "type": assignment_type
-                            }]
-                parsing_multiline = False
-                title = ""
-                if is_first_line:
-                    first_header = line.strip(" \n#")
-                    is_first_line = False
-                cur_section = get_regular_readme_section(line.lower())
-            if cur_section == "title" and not is_empty(line):
-                parsing_multiline = True
-                title = line.strip(" \n#") if title=="" else title + " " + line.strip(" \n#")
+    title = ""
+    if os.name == "nt":
+        path_readme = path + "\\README.md"
+    else:
+        path_readme = path + "/README.md"
+    #print(f"Extracting from: {path_readme}")
+    if(year[0] in ['2019', '2020', '2021']):
+        # parse first header
+        with open(path_readme, "r", encoding="utf8", errors="ignore") as fp:
+            header = ""
+            first_line = fp.readline()
+            if(not any(str in first_line for str in header_filter_until2021)):
+                header = first_line.strip(" \n#")
+            else:
+                stats.filtered_contributions += 1
+        # maybe there is a topic section
+        with open(path_readme, "r", encoding="utf8", errors="ignore") as fp:
+            topic = ""
+            inRecordingMode = False
+            for line in fp:
+                if not inRecordingMode:
+                    if line.startswith('## Topic'):
+                        inRecordingMode = True
+                elif line.startswith('##'):
+                    inRecordingMode = False
+                else:
+                    topic += line
+        # header holds title most likely when it at least 3 words long
+        if(len(header.split()) >= 3): 
+            title = header
+            stats.from_first_line += 1
+        # otherwise title is topic when it consists of less then 20 words
+        elif(len(topic.split()) <= 20):
+            title = topic
+            stats.from_topic_section += 1
+        else:
+            stats.ill_formatted += 1
+        title_before = title
+        #strip titles from unnecessary info
+        for str in substr_filter_until2021:
+            title = re.sub('(?i)'+re.escape(str), lambda m: "", title)
+        if title_before != title:
+            stats.removed_substrings += 1
+    elif(year == ['2022']):
+        pass
+    else:
+        with open(path_readme, "r", encoding="utf8", errors="ignore") as fp:
+            inRecordingMode = False
+            for line in fp:
+                if not inRecordingMode:
+                    if line.startswith('## Title'):
+                        inRecordingMode = True
+                elif line.startswith('##'):
+                    inRecordingMode = False
+                else:
+                    title += line
         if title != "":
             stats.from_topic_section += 1
-            return [{
-                        "title": title,
-                        "relative_url": relative_url,
-                        "type": assignment_type
-                    }]
-                
-        # If no title / heading section was found, return simply the first header
-        if is_not_trivial_header(first_header):
-            stats.from_first_line += 1
-            return [{
-                    "title": first_header.strip(" \n#"),
-                    "relative_url": relative_url,
-                    "type": assignment_type
-                }]
-        stats.ill_formatted += 1
-        #warn(f"Could not extract title from contribution with path {relative_url}")
-        return []
+        else:
+            stats.ill_formatted += 1
+    #Remove markdown URLs from title name
+    title = re.sub(r"\[(.+)\]\(.+\)", r"\1", title)
+    #Remove markdown chars used for highlighting
+    for ch in ['*', '_']:
+        title = title.replace(ch, '')
+    #Replace newline chars with spaces
+    title = title.replace("\n", ' ')
+    #Remove double spaces
+    title = re.sub("\s\s+", " ", title)
+    #Remove all leading and trailing spaces
+    title = title.strip()
+    #Capitalize first letter
+    if title != "":
+        title = title[0].upper() + title[1:]
+    return title
 
-def get_regular_readme_section(line):
-    #if "title" in line.lower() or "topic" in line.lower():
-    if "title" in line.lower():
-        return "title"
-    else:
-        return "irrelevant-section"
-
-def is_empty(line):
-    return line.strip(" \n#") == ""
-
-def is_not_trivial_header(header):
-    header = header.lower()
-    for w in list(non_informant_words):
-        header = header.replace(w, "")
-    for p in list(punctuation):
-        header = header.replace(p, "")
-    header = header.strip(" \n#")
-    return header != ""
+def get_unique_type_label(t):
+    if "executable-tutorial" in t and "tutorial" in t:
+        return "tutorial"
+    if "open-source" in t and "open" in t:
+        return "open-source"
+    return t[0]
