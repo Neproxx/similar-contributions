@@ -51,7 +51,7 @@ runs:
   steps:
     - run: python -m pip install nltk  # Installing dependencies
       shell: bash
-    - run: python ./main.py
+    - run: python main.py
       shell: bash
       env:
         INPUT_CONT_DIR: ${{ inputs.cont_dir }}
