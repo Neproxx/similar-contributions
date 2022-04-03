@@ -170,7 +170,10 @@ def get_all_contributions(path_contributions, allowed_types, allowed_years, subs
             & (cyear != []) # Filter only allowed years
         ) :
             ctitle = extract_title_from_readme(path, cyear, stats, substr_filter_until2021, header_filter_until2021)
-            rel_path = os.path.join(path_contributions, path.lstrip(os.getcwd()))
+            rel_path = os.path.join(path, "README.md").replace(os.getcwd(), "")
+            print("Full: ", os.path.join(path, "README.md"))
+            print("cdw: ", os.getcwd())
+            print("rel: ", rel_path)
             if (ctitle != ""): # Add candidate only if title could be added
                 candidates_all += [{
                                 "title": ctitle,
